@@ -43,7 +43,7 @@ class App(Tk):
         self.unplace_all_pages()
 
     def open_register(self):
-        self.unplace_all_frames()
+        self.unplace_all_pages()
         self.register_page.place(x=0,y=0)
 
     def unplace_all_pages(self):
