@@ -13,6 +13,8 @@ class Login(Frame):
 
         label = Label(self, text="text", relief=RAISED)
 
+        label = Label(self, text="login")
+
         
 
 
