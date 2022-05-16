@@ -11,7 +11,7 @@ class Login(Frame):
         label = Label(self, text="login", relief=RAISED)
         label.pack()
 
-        label = Label(self, text="text")
+        label = Label(self, text="text", relief=RAISED)
 
         
 
