@@ -24,7 +24,7 @@ class Main_Win:
         main_win.title("Project")
         main_win.geometry(f"{settings.WIDTH}x{settings.HEIGHT}")
 
-        self.profile_page = Profile_Page(self.main_win, width=settings.WIDTH, height=settings.HEIGHT)
+        self.profile_page = Profile_Page(self.main_win, width=settings.WIDTH, height=settings.HEIGHT,user=user)
 
         menubar = Menu(self.main_win)
         self.main_win.config(menu=menubar)

@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter import messagebox
 from classes.user import User
+from PIL import ImageTk,Image  
 import settings
 
 class Login_Page:
@@ -9,12 +10,18 @@ class Login_Page:
     
         self.login = login
         login.title("Login")
-        login.geometry("450x230")
+        login.geometry("550x230+400+200")
         self.logged_in = False
         self.user = user
 
         self.login.configure(bg=settings.PROGRAM_BG)
+        self.login.resizable(False, False)
 
+
+        self.image_canvas = Canvas(login, width=80, height=80)
+        self.image_canvas.place(x=0, y=0) 
+        self.img = ImageTk.PhotoImage(Image.open("images/muziek.jpg"))  
+        self.image_canvas.create_image(1, 1, anchor=NW, image=self.img) 
 
         self.username = Label(login, text="Gebruikersnaam:", bg=settings.PROGRAM_BG)
         self.username.place(relx=0.150, rely=0.298, height=20, width=120)
@@ -62,8 +69,11 @@ class Login_Page:
         password = self.password_box.get()
         login_completed = self.login_completed.get()
 
-        if name == "user" and password == "1234":
+        #database call komt hier
+
+        if name == "tim" and password == "1234":
             self.user.logged_in = True
+            self.user.first_name = 'tim'
             self.login.destroy() 
             self.login_completed == 1
 
