@@ -3,6 +3,8 @@ from tkinter import messagebox
 from classes.user import User
 from PIL import ImageTk,Image  
 import settings
+import mysql.connector
+from mysql.connector import (connection)
 
 class Login_Page:
 
@@ -71,9 +73,25 @@ class Login_Page:
 
         #database call komt hier
 
-        if name == "tim" and password == "1234":
+        db = connection.MySQLConnection(user='sql11491613', password='eWFcPv5Ndt',
+                                 host='35.157.16.43',
+                                 database='sql11491613')
+
+        mycursor = db.cursor()
+        db_name= "sql11491613"
+
+        users=mycursor.execute(f"SELECT * FROM users where password='{password}' and firstName='{name}';")
+        for user in mycursor:
+            self.user.userID = user[0]
+            self.user.roleId = user[1]
+            self.user.last_name = user[2]
+            self.user.first_name = user[3]
+            self.user.email = user[4]
+            self.user.stage_name = user[6]
+            self.user.manager = user[7]
+
+        if self.user.userID:
             self.user.logged_in = True
-            self.user.first_name = 'tim'
             self.login.destroy() 
             self.login_completed == 1
 

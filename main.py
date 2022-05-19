@@ -43,8 +43,11 @@ class Main_Win:
         #Project menu
         project_menu = Menu(menubar, tearoff=False)
 
+        setup_menu = Menu(menubar, tearoff=False)
+
         menubar.add_cascade(label='Gebruiker', menu=user_menu)
         menubar.add_cascade(label='Project', menu=project_menu)
+        menubar.add_cascade(label='Setup', menu=setup_menu)
 
 
     def mainloop_window(self): 
