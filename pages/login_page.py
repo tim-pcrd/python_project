@@ -1,18 +1,9 @@
 from tkinter import *
 from tkinter import messagebox
 from classes.user import User
-from PIL import ImageTk,Image  
+# from PIL import ImageTk,Image
+
 import settings
-import mysql.connector
-from mysql.connector import (connection)
-
-import mysql.connector
-from mysql.connector import (connection)
-
-db = connection.MySQLConnection(user='sql11491613', password='eWFcPv5Ndt',
-                                host='35.157.16.43',
-                                database='sql11491613')
-mycursor = db.cursor()
 
 class Login_Page:
 
@@ -21,20 +12,23 @@ class Login_Page:
         self.login = login
         login.title("Login")
         login.geometry("550x230+400+200")
-        self.logged_in = False
         self.user = user
 
         self.login.configure(bg=settings.PROGRAM_BG)
         self.login.resizable(False, False)
 
 
-        self.image_canvas = Canvas(login, width=80, height=80)
-        self.image_canvas.place(x=0, y=0) 
-        self.img = ImageTk.PhotoImage(Image.open("images/muziek.jpg"))  
-        self.image_canvas.create_image(1, 1, anchor=NW, image=self.img) 
+        # self.image_canvas = Canvas(login, width=80, height=80)
+        # self.image_canvas.place(x=0, y=0) 
+        # self.img = ImageTk.PhotoImage(Image.open("images/muziek.jpg"))  
+        # self.image_canvas.create_image(1, 1, anchor=NW, image=self.img) 
 
-        self.username = Label(login, text="Gebruikersnaam:", bg=settings.PROGRAM_BG)
-        self.username.place(relx=0.150, rely=0.298, height=20, width=120)
+
+
+        #login form
+
+        self.email = Label(login, text="Email:", bg=settings.PROGRAM_BG)
+        self.email.place(relx=0.150, rely=0.298, height=20, width=120)
 
         self.password = Label(login, text="Wachtwoord:", bg=settings.PROGRAM_BG)
         self.password.place(relx=0.150, rely=0.468, height=20, width=120)
@@ -51,8 +45,8 @@ class Login_Page:
         self.exit_button.configure(command=self.exit_login)
 
 
-        self.username_box = Entry(login)
-        self.username_box.place(relx=0.440, rely=0.298, height=20, relwidth=0.35)
+        self.email_box = Entry(login)
+        self.email_box.place(relx=0.440, rely=0.298, height=20, relwidth=0.35)
 
         self.password_box = Entry(login)
         self.password_box.place(relx=0.440, rely=0.468, height=20, relwidth=0.35)
@@ -67,6 +61,17 @@ class Login_Page:
         self.show_password.configure(text='''Toon wachtwoord''',bg=settings.PROGRAM_BG)
         self.show_password.configure(variable=self.var, command=self.cb)
 
+
+        self.register_button = Button(login, text="Registeren", bg=settings.BUTTON_BG)
+        self.register_button.place(relx=0.85, rely=0.05, height=30, width=70)
+        self.register_button.configure(command=self.open_register)
+
+        
+    def open_register(self):
+        from pages.register_page import Register_Page
+        self.register_win = Register_Page()
+        self.register_win.mainloop_window()
+
     def cb(self, ):
 
         if self.var.get() == True:
@@ -75,34 +80,14 @@ class Login_Page:
             self.password_box.configure(show="*")
 
     def login_user(self):
-        name = self.username_box.get()
+        email= self.email_box.get()
         password = self.password_box.get()
-        login_completed = self.login_completed.get()
 
-        #database call komt hier
-
-        db = connection.MySQLConnection(user='sql11491613', password='eWFcPv5Ndt',
-                                 host='35.157.16.43',
-                                 database='sql11491613')
-
-        mycursor = db.cursor()
-        db_name= "sql11491613"
-
-        users=mycursor.execute(f"SELECT * FROM users where password='{password}' and firstName='{name}';")
-        for user in mycursor:
-            self.user.userID = user[0]
-            self.user.roleId = user[1]
-            self.user.last_name = user[2]
-            self.user.first_name = user[3]
-            self.user.email = user[4]
-            self.user.stage_name = user[6]
-            self.user.manager = user[7]
+        self.user.login_user(email, password)
 
         if self.user.userID:
             self.user.logged_in = True
-            self.login.destroy() 
-            self.login_completed == 1
-
+            self.login.destroy()
         else:
             messagebox.showwarning("Gebruikersnaam of wachtwoord verkeerd!")
 

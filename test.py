@@ -15,3 +15,7 @@ for x in mycursor:
 users=mycursor.execute("SELECT * FROM users;")
 for x in mycursor:
     print(x)
+
+mycursor.close()
+
+db.close()
