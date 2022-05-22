@@ -34,7 +34,6 @@ class Db:
 
 
 
-
     def db_insert(self, query: str, data) -> int:
         try:
             self.get_connection()
@@ -58,9 +57,26 @@ class Db:
                 self.db.close()
 
 
-    def db_update(self, query: str, data) -> tuple:
-        pass
-        
+    def db_update(self, query: str, data) -> bool:
+        try:
+            self.get_connection()
+
+            db_cursor = self.db.cursor(buffered=True)
+            db_cursor.execute(query, data)
+            self.db.commit()
+
+            #return True (geslaagd) of False  
+            return db_cursor.rowcount > 0
+
+        except mysql.connector.Error as error:
+            print(f'Update mislukt: {error}')
+            return False
+
+        finally:
+            if self.db.is_connected():
+                db_cursor.close()
+                self.db.close()
+
 
     def db_delete(self, query: str) -> bool:
         try:
@@ -79,8 +95,9 @@ class Db:
             return False;
         
         finally:
-            db_cursor.close()
-            self.db.close()
+            if self.db.is_connected():
+                db_cursor.close()
+                self.db.close()
 
     
 

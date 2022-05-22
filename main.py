@@ -21,6 +21,7 @@ class Main_Win:
      
         self.main_win = main_win
         self.main_win.configure(bg=settings.PROGRAM_BG)
+        self.main_win.resizable(False,False)
         main_win.title("Project")
         main_win.geometry(f"{settings.WIDTH}x{settings.HEIGHT}")
 
