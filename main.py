@@ -1,9 +1,8 @@
-from tkinter import *
-from tkinter import messagebox
+import pages.login_page
+import settings
+from classes.user import User
 from pages.login_page import *
 from pages.profile_page import Profile_Page
-from classes.user import User
-import settings
 
 
 user = User()
