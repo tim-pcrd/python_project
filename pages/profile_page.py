@@ -1,3 +1,4 @@
+from email import message
 from tkinter import *
 from classes.db import Db
 from classes.user import User
@@ -59,21 +60,28 @@ class Profile_Page(Frame):
 
 
    def save_user(self):
-      self.message.place_forget()
-
       first_name = self.first_name_box.get()
       last_name = self.last_name_box.get()
       email = self.email_box.get()
       result = self.user.update_user(email, first_name, last_name)
 
+      if result and self.message:
+         self.message.place_forget()
+
 
       
-
    def change_password(self):
-      self.message.place_forget()
+      if self.message:
+            self.message.place_forget()
 
       new_password = self.password_box.get()
       repeat_password = self.repeat_password_box.get()
+
+
+
+      if not new_password or len(new_password) < 4:
+         self.error_message('Wachtwoord moet minstens 4 tekens bevatten.')
+         return
 
       if new_password != repeat_password:
          self.error_message('Wachtwoorden komen niet overeen.')
@@ -83,10 +91,12 @@ class Profile_Page(Frame):
 
       if not result:
          self.error_message('Update mislukt')
+      elif self.message:
+         self.message.place_forget()
 
 
    def error_message(self, message):
-      self.message = Label(self, text=f"{message}", bg=settings.PROGRAM_BG, fg='red',font=("Arial", 14))
+      self.message = Label(self, text=f"{message}", bg=settings.PROGRAM_BG, fg='red',font=("Arial", 12))
       self.message.place(relx=0.100, rely=0.700, height=40, width=400)
 
 

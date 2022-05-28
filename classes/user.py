@@ -26,11 +26,12 @@ class User:
     
     def login_user(self, email, password):
         db = Db()
-        query = 'SELECT * FROM users WHERE emailAddress = %s AND password = %s'
+        query = 'SELECT u.*, r.role FROM users u inner join roles r on r.roleID = u.roleID WHERE emailAddress = %s AND password = %s'
         data = (email, password)
         result = db.db_select(query,data)
 
         if result and len(result) == 1:
+            print(result)
             for user in result:
                 self.userID = user[0]
                 self.roleId = user[1]
@@ -67,6 +68,17 @@ class User:
 
         return False
 
+
+    def check_email_exists(self, email):
+        db = Db()
+        query = "SELECT COUNT(*) FROM users where emailAddress = %s"
+        data = (email,)
+        result = db.db_select_one(query,data)
+
+        if result and result[0] > 0 :
+            return True
+
+        return False
 
 
     def select_user(self, id):

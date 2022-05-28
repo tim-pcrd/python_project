@@ -16,7 +16,6 @@ class Db:
                 db_cursor.execute(query, data)
             else:
                 db_cursor.execute(query)
-            self.db.commit()
 
             result = db_cursor.fetchall()
 
@@ -31,7 +30,28 @@ class Db:
             if self.db.is_connected():
                 db_cursor.close()
                 self.db.close()
+                
 
+    def db_select_one(self, query, data) -> tuple:
+        try:
+            self.get_connection()
+
+            db_cursor = self.db.cursor(buffered=True)
+            db_cursor.execute(query, data)
+
+            result = db_cursor.fetchone()
+
+            # return tuple
+            return result
+
+        except mysql.connector.Error as error:
+            print(f'Select failed: {error}')
+            return None
+
+        finally:
+            if self.db.is_connected():
+                db_cursor.close()
+                self.db.close()
 
 
     def db_insert(self, query: str, data) -> int:

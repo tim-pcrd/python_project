@@ -66,6 +66,8 @@ class Login_Page:
         self.register_button.place(relx=0.85, rely=0.05, height=30, width=70)
         self.register_button.configure(command=self.open_register)
 
+        self.message= None
+
         
     def open_register(self):
         from pages.register_page import Register_Page
@@ -88,8 +90,14 @@ class Login_Page:
         if self.user.userID:
             self.user.logged_in = True
             self.login.destroy()
+            if self.message:
+                self.message.place_forget()
         else:
-            messagebox.showwarning("Gebruikersnaam of wachtwoord verkeerd!")
+            self.error_message('Wachtwoord of email niet correct')
+
+    def error_message(self, message):
+        self.message = Label(self.login, text=f"{message}", bg=settings.PROGRAM_BG, fg='red',font=("Arial", 12))
+        self.message.place(relx=0.100, rely=0.800, height=40, width=400)
 
 
     def exit_login(self):

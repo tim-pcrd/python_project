@@ -3,6 +3,7 @@ from tkinter import messagebox
 from pages.login_page import *
 from pages.profile_page import Profile_Page
 from classes.user import User
+from pages.test_page import Test
 import settings
 
 
@@ -25,7 +26,10 @@ class Main_Win:
         main_win.title("Project")
         main_win.geometry(f"{settings.WIDTH}x{settings.HEIGHT}")
 
-        self.profile_page = Profile_Page(self.main_win, width=settings.WIDTH, height=settings.HEIGHT,user=user)
+        # self.profile_page = Profile_Page(self.main_win, width=settings.WIDTH, height=settings.HEIGHT,user=user)
+
+
+        # self.test_page= Test(self.main_win, width=settings.WIDTH, height=settings.HEIGHT)
 
         menubar = Menu(self.main_win)
         self.main_win.config(menu=menubar)
@@ -55,15 +59,18 @@ class Main_Win:
         self.main_win.mainloop()
 
     def open_logout(self):
-        self.unplace_all_pages()
+        self.destroy_all_pages()
+        self.test_page= Test(self.main_win, width=settings.WIDTH, height=settings.HEIGHT)
+        self.test_page.place(x=0,y=0)
 
     def open_profile(self):
-        self.unplace_all_pages()
+        self.destroy_all_pages()
+        self.profile_page = Profile_Page(self.main_win, width=settings.WIDTH, height=settings.HEIGHT,user=user)    
         self.profile_page.place(x=0,y=0)
 
-    def unplace_all_pages(self):
+    def destroy_all_pages(self):
         for page in self.main_win.place_slaves():
-            page.place_forget()
+            page.destroy()
 
 
 main_win = Main_Win()

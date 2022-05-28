@@ -9,7 +9,7 @@ class Register_Page:
         print('init register page')
         self.register = register
         register.title("Registreren")
-        register.geometry("550x600+400+200")
+        register.geometry("550x400+400+200")
 
         self.register.configure(bg=settings.PROGRAM_BG)
         self.register.resizable(False, False)
@@ -68,20 +68,34 @@ class Register_Page:
         first_name = self.first_name_box.get()
         last_name = self.last_name_box.get()
 
+        
         if self.message:
             self.message.place_forget()
 
+        # Controleer of alle velden zijn ingevuld
         if not email or not password or not repeat_password or not first_name or not last_name:
             self.error_message("*Niet alle velden zijn ingevuld")
             return
 
+        # Controleer of wachtwoord minstens 4 tekens bevat
+        if len(password) < 4:
+            self.error_message('*Wachtwoord moet minstens 4 tekens bevatten')
+            return
+
+        #Controleer dat wachtwoord gelijk is aan herhaal wachtwoord
         if password != repeat_password:
             self.error_message("*Wachtwoorden komen niet overeen!")
             return
 
         user = User()
 
-        result = user.create_user(email, password, first_name, last_name);
+        # Controleer of email al bestaat in database
+        if user.check_email_exists(email):
+            self.error_message("*Dit emailadres is al in gebruik")
+            return
+
+
+        result = user.create_user(email, password, first_name, last_name)
         if result > 0:
             self.exit_register()
         else:
@@ -90,8 +104,10 @@ class Register_Page:
 
         
     def error_message(self, message):
-        self.message = Label(self.register, text=f"{message}", bg=settings.PROGRAM_BG, fg='red',font=("Arial", 14))
+        self.message = Label(self.register, text=f"{message}", bg=settings.PROGRAM_BG, fg='red',font=("Arial", 12))
         self.message.place(relx=0.100, rely=0.700, height=40, width=400)
+
+    
 
     def exit_register(self):
         self.register.destroy()
