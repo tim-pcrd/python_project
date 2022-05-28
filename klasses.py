@@ -1,3 +1,6 @@
+#eerste experiment met klasses om te zien of we ze wel nodig hebben
+#klasses met hoofdletter
+#lijsten zonder hoofdletter
 
 class Gear:
 
@@ -16,7 +19,7 @@ class Gear:
 
     def __str__(self):
 
-        return "Gearid:\t\t{} \nnaam:\t\t{} \nketen:\t\t{} \nknoppen:\t{}\n".format(self.idGear, self.naam, self.keten, string_knoppen)
+        return "Gearid:\t\t{} \nnaam:\t\t{} \nketen:\t\t{} \nknoppen:\t{}\n".format(self.idGear, self.naam, self.keten, self.knoppen)
 
 
 class Control:
@@ -32,7 +35,7 @@ class Control:
 
 
 
-
+#klasse Keten met benoeming en een lijst 'gearseq' meegegeven
 class Keten:
 
     def __init__(self, idKeten, naam, gearseq):
@@ -60,12 +63,12 @@ controls_eq=["freqLo","Qlo","gainLo","freqMid","Qmid","gainMid","freqHi","Qhi","
 controls_pre=["gain","volume",phantom]
 
 
-g1=Gear("g1","API","CH1+2")
+g1=Gear("g1","API 2500 compressor","CH1+2")
 g1.voeg_control_toe(controls_comp)
-g2=Gear("g2","Aphex","LR")
+g2=Gear("g2","Aphex Aural Exciter","LR")
 g3=Gear("g3","FunkyFish SSL G-Gomp","LR")
 g4=Gear("g4","Vintech Stereo Pre-amp/EQ","LR")
-g5=Gear("g5","Aphex","LR")
+g5=Gear("g5","Aphex Stereo EQ","LR")
 
 gearlist=[g1,g2,g3,g4,g5]
 
@@ -79,7 +82,10 @@ K1=Keten("k1","Kanaal1",keten1)
 K2=Keten("k2","Kanaal2",keten1)
 K3=Keten("k3","Kanaal3",keten1)
 
+#lijst met ketens. een keten is ook een lijst, dus uiteindelijk een lijst met lijsten
 ketens=[keten1,keten2,keten3]
+
+#lijst instances van klasse Keten
 Ketens=[K1,K2,K3]
 
 
@@ -107,13 +113,14 @@ def toon_gearlist():
     print("-----gearlist END------\n")
 
 def toon_Ketens():
+    print("overzicht ketens:")
     for x in ketens:
         for y in x:
             print(y)
 
 
-def maak_keten():
-
+'''def maak_keten():
+    print("maak keten:")
     for x in Ketens:
         print(x.naam+"(ID="+x.idKeten+")")
 
@@ -130,8 +137,32 @@ def maak_keten():
     for x in gearlist:
         if gearkeuze==x.idGear:
             ketenlijst.append(x)
-            y=Keten(y.idKeten,y.naam,ketenlijst)
+            y=Keten(y.idKeten,y.naam,ketenlijst)'''
 
+def maak_keten():
+    keuze_k=""
+    keuze_g=""
+    while not keuze_k == "n":
+
+        print("maak keten:")
+        for x in Ketens:
+            print(x.naam+"(ID="+x.idKeten+")")
+        ketenkeuze=input("geef keten ID in:")
+        for y in Ketens:
+            if ketenkeuze==y.idKeten:
+                ketenlijst=list(y.gearseq)
+        keuze_k = input("wil je nog een keten aanpassen? (y/n)")
+
+
+        print("kies een outboard gear unit")
+        for x in gearlist:
+            print(x.naam+"(ID="+x.idGear+")")
+        gearkeuze=input("geef ID in:")
+        for x in gearlist:
+            if gearkeuze==x.idGear:
+                ketenlijst.append(x)
+                y=Keten(y.idKeten,y.naam,ketenlijst)
+        keuze_g=input("wil je nog een gearunit toevoegen? (y/n)")
 
 def menu():
     print("je kan kiezen uit")
@@ -150,16 +181,18 @@ while(not invoer == "stop"):
         toon_gearlist()
 
     elif(invoer == "2"):
-        maak_keten()
-    elif(invoer == "3"):
-        print("overzicht ketens:")
+
         toon_Ketens()
+
+    elif(invoer == "3"):
+        maak_keten()
     elif(invoer == "4"):
         pass
     elif(invoer == "5"):
         pass
     elif(invoer == "6"):
         pass
+    menu()
     invoer = input("Wat wil je doen? geef het nummer in of stop om te stoppen")
-'''
+
 
