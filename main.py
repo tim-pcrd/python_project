@@ -1,4 +1,5 @@
 import pages.login_page
+from pages.users_admin_page import Users_Admin_Page
 import settings
 from classes.user import User
 from pages.login_page import *
@@ -26,11 +27,6 @@ class Main_Win:
         main_win.title("Project")
         main_win.geometry(f"{settings.WIDTH}x{settings.HEIGHT}")
 
-        # self.profile_page = Profile_Page(self.main_win, width=settings.WIDTH, height=settings.HEIGHT,user=user)
-
-
-        # self.test_page= Test(self.main_win, width=settings.WIDTH, height=settings.HEIGHT)
-
         menubar = Menu(self.main_win)
         self.main_win.config(menu=menubar)
 
@@ -39,7 +35,15 @@ class Main_Win:
         user_menu.add_command(
             label='Profiel',
             command=self.open_profile
-        )     
+        )
+
+        # Controleer of user admin is
+        if user.role == 'admin':
+            user_menu.add_command(
+                label='Admin',
+                command=self.open_users_admin
+            )
+
         user_menu.add_command(
             label='Uitloggen',
             command=self.open_logout
@@ -60,13 +64,19 @@ class Main_Win:
 
     def open_logout(self):
         self.destroy_all_pages()
-        self.test_page= Test(self.main_win, width=settings.WIDTH, height=settings.HEIGHT)
-        self.test_page.place(x=0,y=0)
+        exit()
 
     def open_profile(self):
         self.destroy_all_pages()
-        self.profile_page = Profile_Page(self.main_win, width=settings.WIDTH, height=settings.HEIGHT,user=user)    
+        self.profile_page = Profile_Page(self.main_win, width=settings.WIDTH, height=settings.HEIGHT, user=user)    
         self.profile_page.place(x=0,y=0)
+
+    def open_users_admin(self):
+        self.destroy_all_pages()
+        self.users_admin_page = Users_Admin_Page(self.main_win, width= settings.WIDTH, height=settings.HEIGHT, user=user)
+        self.users_admin_page.place(x=0,y=0)
+
+        
 
     def destroy_all_pages(self):
         for page in self.main_win.place_slaves():

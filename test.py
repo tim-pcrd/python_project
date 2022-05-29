@@ -8,6 +8,10 @@ db = connection.MySQLConnection(user='sql11491613', password='eWFcPv5Ndt',
 mycursor = db.cursor()
 db_name= "sql11491613"
 
+users=mycursor.execute("SHOW columns FROM users;")
+for x in mycursor:
+    print(x)
+
 users=mycursor.execute("SHOW columns FROM roles;")
 for x in mycursor:
     print(x)
@@ -19,6 +23,9 @@ for x in mycursor:
 roles = mycursor.execute("SELECT * FROM roles;")
 for x in mycursor:
     print(x)
+
+# test=  mycursor.execute('update users set roleId = 2 where userID = 20')
+# db.commit()
 
 
 mycursor.close()

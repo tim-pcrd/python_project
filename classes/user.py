@@ -13,12 +13,13 @@ class User:
         self.manager = None
         self.stage_name = None
         self.password = None
+        self.role = None
 
 
     def create_user(self,email, password, firstName, lastName):
         db = Db()
         query = 'INSERT INTO users (emailAddress, password, firstName, lastName, roleID) VALUES (%s,%s,%s,%s,%s);'
-        data = (email, password, firstName, lastName, 2)
+        data = (email, password, firstName, lastName, 1)
         result = db.db_insert(query, data)
 
         return result
@@ -28,19 +29,18 @@ class User:
         db = Db()
         query = 'SELECT u.*, r.role FROM users u inner join roles r on r.roleID = u.roleID WHERE emailAddress = %s AND password = %s'
         data = (email, password)
-        result = db.db_select(query,data)
+        result = db.db_select_one(query,data)
 
-        if result and len(result) == 1:
-            print(result)
-            for user in result:
-                self.userID = user[0]
-                self.roleId = user[1]
-                self.first_name = user[3]
-                self.last_name = user[2]
-                self.email = user[4]
-                self.password = user[5]
-                self.stage_name = user[6]
-                self.manager = user[7]
+        if result:
+            self.userID = result[0]
+            self.roleId = result[1]
+            self.first_name = result[3]
+            self.last_name = result[2]
+            self.email = result[4]
+            self.password = result[5]
+            self.stage_name = result[6]
+            self.manager = result[7]
+            self.role = result[8]
 
 
     def update_user(self, email, first_name, last_name):
@@ -83,20 +83,42 @@ class User:
 
     def select_user(self, id):
         db = Db()
-        query = 'SELECT * FROM users WHERE userID = %s'
+        query = 'SELECT u.*, r.role FROM users u inner join roles r on r.roleID = u.roleID WHERE userID = %s inner join '
         data = (id,)
-        result = db.db_select(query,data)
+        result = db.db_select_one(query,data)
 
-        if result and len(result) == 1:
-            for user in result:
-                self.userID = user[0]
-                self.roleId = user[1]
-                self.first_name = user[3]
-                self.last_name = user[2]
-                self.email = user[4]
-                self.password = user[5]
-                self.stage_name = user[6]
-                self.manager = user[7]
+        if result:
+            self.userID = result[0]
+            self.roleId = result[1]
+            self.first_name = result[3]
+            self.last_name = result[2]
+            self.email = result[4]
+            self.password = result[5]
+            self.stage_name = result[6]
+            self.manager = result[7]
+            self.role = result[8]
+
+    def select_all_users(self, exludedId = 0):
+        db = Db()
+        query = "SELECT * FROM users where userID != %s"
+        data = (exludedId,)
+        db_results = db.db_select(query, data)
+
+        users: list[User] = []
+        if db_results:
+            for result in db_results:
+                user = User()
+                user.userID = result[0]
+                user.roleId = result[1]
+                user.first_name = result[3]
+                user.last_name = result[2]
+                user.email = result[4]
+                user.password = result[5]
+                user.stage_name = result[6]
+                user.manager = result[7]
+                users.append(user)
+
+        return users
 
 
     def __str__(self) -> str:
