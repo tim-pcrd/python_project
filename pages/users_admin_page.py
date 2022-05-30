@@ -37,7 +37,7 @@ class Users_Admin_Page(Frame):
 
     
     def get_selected_user(self):
-        pass
+        selected_id = self.users
 
         
  

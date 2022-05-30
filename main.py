@@ -60,8 +60,6 @@ class Main_Win:
         )
 
 
-
-
         menubar.add_cascade(label='Gebruiker', menu=user_menu)
         menubar.add_cascade(label='Project', menu=project_menu)
         menubar.add_cascade(label='Setup', menu=setup_menu)
@@ -84,18 +82,14 @@ class Main_Win:
         self.users_admin_page = Users_Admin_Page(self.main_win, width= settings.WIDTH, height=settings.HEIGHT, user=user)
         self.users_admin_page.place(x=0, y=0)
 
-        
-
-    def destroy_all_pages(self):
-        for page in self.main_win.place_slaves():
-            page.destroy()
-
     def open_setup(self):
         self.destroy_all_pages()
         self.setup_page = Setup_Page(self.main_win, width=settings.WIDTH, height=settings.HEIGHT,user=user)
         self.setup_page.place(x=0, y=0)
 
-
+    def destroy_all_pages(self):
+        for page in self.main_win.place_slaves():
+            page.destroy()
 
 main_win = Main_Win()
 
