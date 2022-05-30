@@ -4,9 +4,9 @@ import settings
 from classes.user import User
 from pages.login_page import *
 from pages.profile_page import Profile_Page
-from pages.test_page import Test
 import settings
 
+from pages.setup_page import Setup_Page
 
 user = User()
 
@@ -26,6 +26,9 @@ class Main_Win:
         self.main_win.resizable(False,False)
         main_win.title("Project")
         main_win.geometry(f"{settings.WIDTH}x{settings.HEIGHT}")
+
+
+        self.setup_page = Setup_Page(self.main_win, width=settings.WIDTH, height=settings.HEIGHT, user=user)
 
         menubar = Menu(self.main_win)
         self.main_win.config(menu=menubar)
@@ -54,6 +57,14 @@ class Main_Win:
 
         setup_menu = Menu(menubar, tearoff=False)
 
+        setup_menu.add_command(
+            label='Setup Manager',
+            command=self.open_setup
+        )
+
+
+
+
         menubar.add_cascade(label='Gebruiker', menu=user_menu)
         menubar.add_cascade(label='Project', menu=project_menu)
         menubar.add_cascade(label='Setup', menu=setup_menu)
@@ -81,6 +92,11 @@ class Main_Win:
     def destroy_all_pages(self):
         for page in self.main_win.place_slaves():
             page.destroy()
+
+    def open_setup(self):
+        self.unplace_all_pages()
+        self.setup_page.place(x=0,y=0)
+
 
 
 main_win = Main_Win()
