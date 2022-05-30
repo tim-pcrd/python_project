@@ -27,9 +27,6 @@ class Main_Win:
         main_win.title("Project")
         main_win.geometry(f"{settings.WIDTH}x{settings.HEIGHT}")
 
-
-        self.setup_page = Setup_Page(self.main_win, width=settings.WIDTH, height=settings.HEIGHT, user=user)
-
         menubar = Menu(self.main_win)
         self.main_win.config(menu=menubar)
 
@@ -80,12 +77,12 @@ class Main_Win:
     def open_profile(self):
         self.destroy_all_pages()
         self.profile_page = Profile_Page(self.main_win, width=settings.WIDTH, height=settings.HEIGHT, user=user)    
-        self.profile_page.place(x=0,y=0)
+        self.profile_page.place(x=0, y=0)
 
     def open_users_admin(self):
         self.destroy_all_pages()
         self.users_admin_page = Users_Admin_Page(self.main_win, width= settings.WIDTH, height=settings.HEIGHT, user=user)
-        self.users_admin_page.place(x=0,y=0)
+        self.users_admin_page.place(x=0, y=0)
 
         
 
@@ -94,8 +91,9 @@ class Main_Win:
             page.destroy()
 
     def open_setup(self):
-        self.unplace_all_pages()
-        self.setup_page.place(x=0,y=0)
+        self.destroy_all_pages()
+        self.setup_page = Setup_Page(self.main_win, width=settings.WIDTH, height=settings.HEIGHT,user=user)
+        self.setup_page.place(x=0, y=0)
 
 
 
