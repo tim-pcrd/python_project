@@ -29,13 +29,16 @@ class Setup_Page(Frame):
     def __init__(self, root, width, height, user: User):
         super().__init__(root, width=width, height=height)
 
+        self.label_welcome = Label(self, text="Welcome to the Setup Manager. Here you can choose or make a new setup, and define the chains you will use.")
+        self.label_welcome.place(relx=0.1, rely=0.05)
+
         #setup
         self.configure(bg=settings.PROGRAM_BG)
         self.user = user
 
         self.label_setup= Label(self, text="Choose setup" )
         #self.label_setup.pack(side = LEFT, fill = BOTH)
-        self.label_setup.place(relx=0.1, rely = 0.1)
+        self.label_setup.place(relx=0.1, rely = 0.15)
 
 
         self.box_setup = Listbox(self)
@@ -59,7 +62,7 @@ class Setup_Page(Frame):
         self.entry_newsetup.place(relx=0.1,rely=0.55)
 
 
-        self.label_setup_desc = Label(self, text="and setup description:")
+        self.label_setup_desc = Label(self, text="with setup description:")
         self.label_setup_desc.place(relx=0.1, rely=0.6)
 
         self.entry_newsetup_desc= Entry(self, width= 20, bg= "white")
@@ -78,7 +81,7 @@ class Setup_Page(Frame):
 
         self.label_chain = Label(self, text="Choose Chain")
         # self.label_chain.pack()
-        self.label_chain.place(relx=0.3, rely=0.1)
+        self.label_chain.place(relx=0.3, rely=0.15)
 
         self.box_chains = Listbox(self)
         self.box_chains.place(relx=0.3, rely = 0.2)
@@ -94,7 +97,7 @@ class Setup_Page(Frame):
 
         self.label_order = Label(self, text="Choose position")
         # self.label_chain.pack()
-        self.label_order.place(relx=0.5, rely=0.1)
+        self.label_order.place(relx=0.5, rely=0.15)
 
         data = ["1", "2", "3", "4", "5"]
         self.box_order = Combobox(self, values=data)
@@ -115,7 +118,7 @@ class Setup_Page(Frame):
 
         self.label_gear = Label(self, text="Choose Gearunit")
         # self.label_chain.pack()
-        self.label_gear.place(relx=0.7, rely=0.1)
+        self.label_gear.place(relx=0.7, rely=0.15)
 
         self.box_gear = Listbox(self)
         self.box_gear.place(relx=0.7, rely=0.2)

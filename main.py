@@ -48,7 +48,7 @@ class Main_Win:
         setup_menu = Menu(menubar, tearoff=False)
 
         setup_menu.add_command(
-            label='Setup',
+            label='Setup Manager',
             command=self.open_setup
         )
 
