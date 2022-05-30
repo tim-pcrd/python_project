@@ -1,4 +1,4 @@
-from tkinter import W, Button, Frame, Label, Listbox
+from tkinter import W, Button, Entry, Frame, Label, Listbox
 from classes.user import User
 import settings
 
@@ -26,18 +26,32 @@ class Users_Admin_Page(Frame):
         self.first_name = Label(self, text="Voornaam:", bg=settings.PROGRAM_BG,anchor=W)
         self.first_name.place(relx=0.500, rely=0.100, height=20, width=120)
 
+        self.first_name_box = Entry(self)
+        self.first_name_box.place(relx=0.700, rely=0.100, height=20, relwidth=150)
+
         self.last_name = Label(self, text="Familienaam:", bg=settings.PROGRAM_BG,anchor=W)
         self.last_name.place(relx=0.500, rely=0.150, height=20, width=120)
 
+        self.last_name_box = Entry(self)
+        self.last_name_box.place(relx=0.700, rely=0.150, height=20, relwidth=150)
+
         self.email = Label(self, text="Email:", bg=settings.PROGRAM_BG, anchor=W)
         self.email.place(relx=0.500, rely=0.200, height=20, width=120)
+
+        self.email_box = Entry(self)
+        self.email_box.place(relx=0.700, rely=0.150, height=20, relwidth=150)
 
         self.role = Label(self, text="Rol:", bg=settings.PROGRAM_BG, anchor=W)
         self.role.place(relx=0.500, rely=0.25, height=20, width=120)
 
     
     def get_selected_user(self):
-        selected_id = self.users
+        selected_id = self.users_list.curselection()
+        for x in self.users:
+            if x.userID == selected_id:
+                self.selected_user = x
+
+
 
         
  
