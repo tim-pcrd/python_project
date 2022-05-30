@@ -1,4 +1,4 @@
-from tkinter import W, Frame, Label, Listbox
+from tkinter import W, Button, Frame, Label, Listbox
 from classes.user import User
 import settings
 
@@ -19,6 +19,10 @@ class Users_Admin_Page(Frame):
             self.users_list.insert(user.userID, f'{user.first_name} {user.last_name}')
 
 
+        self.list_btn = Button(self, text='Toon geselecteerde gebruiker', command=self.get_selected_user)
+        self.list_btn.place(relx=0.05, rely=0.800, width=180)
+
+
         self.first_name = Label(self, text="Voornaam:", bg=settings.PROGRAM_BG,anchor=W)
         self.first_name.place(relx=0.500, rely=0.100, height=20, width=120)
 
@@ -30,6 +34,10 @@ class Users_Admin_Page(Frame):
 
         self.role = Label(self, text="Rol:", bg=settings.PROGRAM_BG, anchor=W)
         self.role.place(relx=0.500, rely=0.25, height=20, width=120)
+
+    
+    def get_selected_user(self):
+        pass
 
         
  
