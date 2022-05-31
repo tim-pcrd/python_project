@@ -10,8 +10,8 @@ class Gear:
         self.keten = "none"
         self.knoppen = []
 
-    def toon_knoppen():
-        for x in knoppen:
+    def toon_knoppen(self):
+        for x in self.knoppen:
             print(x)
 
     def voeg_control_toe(self, control):

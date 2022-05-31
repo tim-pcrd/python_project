@@ -12,7 +12,7 @@ class ActiveSetup:
         self.setupName=""
         self.setupDescription=""
 
-    def load_setup(setupID):
+    def load_setup(self, setupID):
         db=Db()
         query = "SELECT * FROM setups; WHERE setupID=%s"
         data = setupID
@@ -36,7 +36,7 @@ class ActiveSetup:
         result =db.db_select(query, data)
         for x in result:
             gearlist.append(x)
-        return gearlistx
+        return gearlist
 
 
 class ActiveChain:
