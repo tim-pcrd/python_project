@@ -4,8 +4,10 @@ import settings
 from classes.user import User
 from pages.login_page import *
 from pages.profile_page import Profile_Page
-import settings
 
+from pages.project_page import Project_Page
+from classes.project_session import ActiveSession
+# from pages.session_page import Session_Page (klasse is nog niet gedefinieerd)
 from pages.setup_page import Setup_Page
 
 user = User()
@@ -49,11 +51,19 @@ class Main_Win:
             command=self.open_logout
         )
 
-        #Project menu
-        project_menu = Menu(menubar, tearoff=False)
 
+        project_menu = Menu(menubar, tearoff=False)
+        # session_menu = Menu(menubar, tearoff=False)
         setup_menu = Menu(menubar, tearoff=False)
 
+        project_menu.add_command(
+            label='Project Manager',
+            command=self.open_project
+        )
+        # session_menu.add_command(
+        #     label='Session Manager',
+        #     command=self.open_session
+        # )
         setup_menu.add_command(
             label='Setup Manager',
             command=self.open_setup
@@ -62,6 +72,7 @@ class Main_Win:
 
         menubar.add_cascade(label='Gebruiker', menu=user_menu)
         menubar.add_cascade(label='Project', menu=project_menu)
+        # menubar.add_cascade(label='Session', menu=session_menu)
         menubar.add_cascade(label='Setup', menu=setup_menu)
 
 
@@ -81,6 +92,11 @@ class Main_Win:
         self.destroy_all_pages()
         self.users_admin_page = Users_Admin_Page(self.main_win, width= settings.WIDTH, height=settings.HEIGHT, user=user)
         self.users_admin_page.place(x=0, y=0)
+
+    def open_project(self):
+        self.destroy_all_pages()
+        self.project_page = Project_Page(self.main_win, width=settings.WIDTH, height=settings.HEIGHT, user=user)
+        self.project_page.place(x=0, y=0)
 
     def open_setup(self):
         self.destroy_all_pages()

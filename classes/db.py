@@ -112,7 +112,7 @@ class Db:
         except mysql.connector.Error as error:
             print(f'Delete failed: {error}')
 
-            return False;
+            return False
         
         finally:
             if self.db.is_connected():

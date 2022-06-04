@@ -83,7 +83,7 @@ class User:
 
     def select_user(self, id):
         db = Db()
-        query = 'SELECT u.*, r.role FROM users u inner join roles r on r.roleID = u.roleID WHERE userID = %s inner join '
+        query = 'SELECT u.*, r.role FROM users u inner join roles r on r.roleID = u.roleID WHERE userID = %s'
         data = (id,)
         result = db.db_select_one(query,data)
 
@@ -119,6 +119,28 @@ class User:
                 users.append(user)
 
         return users
+
+    def select_all_musicians(self, roleId):
+        db = Db()
+        query = "SELECT * FROM users WHERE roleId = %s ORDER BY lastName"
+        data = (roleId,)
+        db_results = db.db_select(query, data)
+
+        musicians: list[User] = []
+        if db_results:
+            for result in db_results:
+                user = User()
+                user.userID = result[0]
+                user.roleId = result[1]
+                user.first_name = result[3]
+                user.last_name = result[2]
+                user.email = result[4]
+                user.password = result[5]
+                user.stage_name = result[6]
+                user.manager = result[7]
+                musicians.append(user)
+
+        return musicians
 
 
     def __str__(self) -> str:
