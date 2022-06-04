@@ -84,5 +84,5 @@ class ActiveChain:
     def __str__(self) -> str:
         return f'ActiveChain contains: {self.chainID}, {self.chainName}, {self.pos1}, {self.pos2}, {self.pos3}, {self.pos4}, {self.pos5}'
 
-ActiveChain.select_chain(ActiveChain,2)
-print(ActiveChain())
+# ActiveChain.select_chain(ActiveChain,2)
+# print(ActiveChain())

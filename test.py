@@ -1,6 +1,5 @@
 import mysql.connector
 from mysql.connector import (connection)
-from tabulate import tabulate
 
 db = connection.MySQLConnection(user='sql11491613', password='eWFcPv5Ndt',
                                  host='35.157.16.43',
