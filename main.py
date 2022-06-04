@@ -4,7 +4,6 @@ import settings
 from classes.user import User
 from pages.login_page import *
 from pages.profile_page import Profile_Page
-from pages.test_page import Test
 import settings
 
 
@@ -48,7 +47,7 @@ class Main_Win:
             label='Uitloggen',
             command=self.open_logout
         )
-
+     
         #Project menu
         project_menu = Menu(menubar, tearoff=False)
 
