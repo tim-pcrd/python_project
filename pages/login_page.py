@@ -89,9 +89,10 @@ class Login_Page:
 
         if self.user.userID:
             self.user.logged_in = True
-            self.login.destroy()
             if self.message:
                 self.message.place_forget()
+            self.login.destroy()
+            
         else:
             self.error_message('Wachtwoord of email niet correct')
 

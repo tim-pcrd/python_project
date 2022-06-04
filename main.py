@@ -6,6 +6,7 @@ from pages.login_page import *
 from pages.profile_page import Profile_Page
 import settings
 
+from pages.setup_page import Setup_Page
 
 user = User()
 
@@ -53,6 +54,12 @@ class Main_Win:
 
         setup_menu = Menu(menubar, tearoff=False)
 
+        setup_menu.add_command(
+            label='Setup Manager',
+            command=self.open_setup
+        )
+
+
         menubar.add_cascade(label='Gebruiker', menu=user_menu)
         menubar.add_cascade(label='Project', menu=project_menu)
         menubar.add_cascade(label='Setup', menu=setup_menu)
@@ -68,19 +75,21 @@ class Main_Win:
     def open_profile(self):
         self.destroy_all_pages()
         self.profile_page = Profile_Page(self.main_win, width=settings.WIDTH, height=settings.HEIGHT, user=user)    
-        self.profile_page.place(x=0,y=0)
+        self.profile_page.place(x=0, y=0)
 
     def open_users_admin(self):
         self.destroy_all_pages()
         self.users_admin_page = Users_Admin_Page(self.main_win, width= settings.WIDTH, height=settings.HEIGHT, user=user)
-        self.users_admin_page.place(x=0,y=0)
+        self.users_admin_page.place(x=0, y=0)
 
-        
+    def open_setup(self):
+        self.destroy_all_pages()
+        self.setup_page = Setup_Page(self.main_win, width=settings.WIDTH, height=settings.HEIGHT,user=user)
+        self.setup_page.place(x=0, y=0)
 
     def destroy_all_pages(self):
         for page in self.main_win.place_slaves():
             page.destroy()
-
 
 main_win = Main_Win()
 
