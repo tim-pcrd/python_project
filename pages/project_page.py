@@ -10,6 +10,7 @@ class Project_Page(Frame):
         self.configure(bg=settings.PROGRAM_BG)
         self.user = User()
         self.project = ActiveProject()
+        self.message = ""      # to temporarily store error messages
 
         # define string variables
         self.projectName = StringVar()
@@ -123,7 +124,7 @@ class Project_Page(Frame):
         musicians = user.select_all_musicians(3)
         combo_values = []
         for musician in musicians:
-            combo_values.append(f"{musician.last_name} {musician.first_name}")
+            combo_values.append(f"{musician.userID} {musician.last_name} {musician.first_name}")
         self.musician_name_cb["values"] = combo_values
         self.musician_name_cb.current(0)
 
@@ -131,7 +132,7 @@ class Project_Page(Frame):
         ongoing_projects = self.project.select_all_active_projects()
         combo_values = []
         for project in ongoing_projects:
-            combo_values.append(f"{project.album_name} / {project.last_name} {project.first_name}")
+            combo_values.append(f"{project.projectID} {project.album_name} / {project.last_name} {project.first_name}")
         self.project_current_name_cb["values"] = combo_values
         self.project_current_name_cb.current(0)
 
@@ -139,7 +140,7 @@ class Project_Page(Frame):
         completable_projects = self.project.select_all_active_projects()
         combo_values = []
         for project in completable_projects:
-            combo_values.append(f"{project.album_name} / {project.last_name} {project.first_name}")
+            combo_values.append(f"{project.projectID} {project.album_name} / {project.last_name} {project.first_name}")
         self.project_completable_project_name_cb["values"] = combo_values
         self.project_completable_project_name_cb.current(0)
 
@@ -154,7 +155,7 @@ class Project_Page(Frame):
     # button frames and their allocated buttons
     def create_button_frame(self):
         button_frame = Frame(self, bg=settings.PROGRAM_BG)
-        button_create = Button(button_frame, text="Create", bg=settings.BUTTON_BG, padx=20)
+        button_create = Button(button_frame, text="Create", command=self.create_project, bg=settings.BUTTON_BG, padx=20)
         button_reset = Button(button_frame, text="Reset", command=self.reset_create,
                               bg=settings.BUTTON_BG, padx=20)
         button_create.pack(side="left")
@@ -163,7 +164,8 @@ class Project_Page(Frame):
 
     def create_button_frame2(self):
         button_frame2 = Frame(self, bg=settings.PROGRAM_BG)
-        button_rename = Button(button_frame2, text="Rename", bg=settings.BUTTON_BG, padx=20)
+        button_rename = Button(button_frame2, text="Rename", command=self.rename_project, bg=settings.BUTTON_BG,
+                               padx=20)
         button_reset2 = Button(button_frame2, text="Reset", command=self.reset_rename, bg=settings.BUTTON_BG, padx=20)
         button_frame2.place(relx=0.1, rely=0.87, relwidth=0.25)
         button_rename.pack(side="left")
@@ -171,7 +173,8 @@ class Project_Page(Frame):
 
     def create_button_frame3(self):
         button_frame3 = Frame(self, bg=settings.PROGRAM_BG)
-        button_finalize = Button(button_frame3, text="Finalize", bg=settings.BUTTON_BG, padx=20)
+        button_finalize = Button(button_frame3, text="Finalize", command=self.finalize_project, bg=settings.BUTTON_BG,
+                                 padx=20)
         button_reset3 = Button(button_frame3, text="Reset", command=self.reset_finalize,
                                bg=settings.BUTTON_BG, padx=20)
         button_frame3.place(relx=0.5, rely=0.3, relwidth=0.25)
@@ -185,3 +188,62 @@ class Project_Page(Frame):
         button_frame4.place(relx=0.5, rely=0.77, relwidth=0.25)
         button_show.pack(side="left")
         button_reset4.pack(side="right")
+
+    def create_project(self):
+        self.message = ""     # clear any previously set error messages
+
+        self.project.project_name = self.get_string(self.projectName.get(), "project name")
+
+        if self.message == "":
+            if self.musicianName.get():
+                item_db_index = self.get_db_id_of_selected_item(self.musician_name_cb)
+                result = self.project.add_project(self.project.project_name, item_db_index)
+                if isinstance(result, int):
+                    messagebox.showinfo("Success", "Project was successfully added to database.")
+            else:
+                self.message = "Please select a musician."
+                messagebox.showerror("Error", self.message)
+        else:
+            messagebox.showerror("Error", self.message)
+
+    def rename_project(self):
+        self.message = ""     # clear any previously set error messages
+
+        self.project.project_new_name = self.get_string(self.projectNewName.get(), "new name")
+
+        if self.message == "":
+            if self.projectCurrentName.get():
+                item_db_index = self.get_db_id_of_selected_item(self.project_current_name_cb)
+                result = self.project.rename_project(self.project.project_new_name, item_db_index)
+                if isinstance(result, int):
+                    messagebox.showinfo("Success", "Project was successfully renamed.")
+            else:
+                self.message = "Please select a currently existing project you want to rename."
+                messagebox.showerror("Error", self.message)
+        else:
+            messagebox.showerror("Error", self.message)
+
+    def finalize_project(self):
+        self.message = ""     # clear any previously set error messages
+
+        if self.projectCompletableProjectName.get():
+            item_db_index = self.get_db_id_of_selected_item(self.project_completable_project_name_cb)
+            result = self.project.finalize_project(item_db_index)
+            if isinstance(result, int):
+                messagebox.showinfo("Success", "Project was successfully finalized.")
+        else:
+            self.message = "Please select a currently existing project you want to finalize."
+            messagebox.showerror("Error", self.message)
+
+    def get_string(self, val, fieldName):
+        if len(val) >= 4:
+            return val
+        else:
+            self.message += f"Entry in field \"{fieldName}\" must consist of at least 4 characters.\n"
+
+    def get_db_id_of_selected_item(self, combobox):
+        selected_value = combobox.get()
+        if selected_value:
+            i = selected_value.find(" ")
+            idx = int(selected_value[0:i])
+            return idx

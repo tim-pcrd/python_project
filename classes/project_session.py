@@ -1,6 +1,8 @@
 from classes.db import Db
 
 
+
+
 class ActiveProject:
     def __init__(self):
         self.projectID= None
@@ -64,7 +66,35 @@ class ActiveProject:
 
         return projects
 
+    def add_project(self, albumName, artistID):
+        db = Db()
+        query = "INSERT INTO projects(albumName, artistID, startDate) VALUES (%s, %s, NOW());"
+        data = (albumName, artistID)
+        result = db.db_insert(query, data)
 
+        return result
+
+    def rename_project(self, albumName, projectID):
+        db = Db()
+        query = "UPDATE projects SET albumName = %s WHERE projectID = %s"
+        data = (albumName, projectID)
+        result = db.db_update(query, data)
+
+        if result:
+            return result
+
+        return False
+
+    def finalize_project(self, projectID):
+        db = Db()
+        query = "UPDATE projects SET endDate = NOW() WHERE projectID = %s"
+        data = (projectID,)
+        result = db.db_update(query, data)
+
+        if result:
+            return result
+
+        return False
 
 class ActiveSession:
     def __init__(self):
