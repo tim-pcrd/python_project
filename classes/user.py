@@ -123,7 +123,6 @@ class User:
 
     
     def save_user(self):
-        print(self)
         db = Db()
         query = "UPDATE users SET firstName = %s, lastName = %s, emailAddress = %s, roleID = %s WHERE userID = %s"
         data = (self.first_name, self.last_name, self.email, self.roleId, self.userID);
@@ -133,6 +132,14 @@ class User:
             return True
         else:
             return False
+
+    def delete_user(self):
+        db = Db()
+        query = 'DELETE FROM users WHERE userID = %s'
+        data = (self.userID,)
+        db_result = db.db_delete(query,data)
+
+        return db_result
 
             
     def select_all_musicians(self, roleId):

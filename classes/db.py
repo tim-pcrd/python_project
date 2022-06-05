@@ -98,12 +98,12 @@ class Db:
                 self.db.close()
 
 
-    def db_delete(self, query: str) -> bool:
+    def db_delete(self, query: str, data) -> bool:
         try:
             self.get_connection()
 
             db_cursor = self.db.cursor(buffered=True)
-            db_cursor.execute(query)
+            db_cursor.execute(query, data)
             self.db.commit()
 
             #return True (geslaagd) of False  
