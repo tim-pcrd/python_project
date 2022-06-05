@@ -4,10 +4,10 @@ from tkinter.messagebox import showinfo
 
 from mysql.connector import (connection)
 
-db = connection.MySQLConnection(user='sql11491613', password='eWFcPv5Ndt',
-                                host='35.157.16.43',
-                                database='sql11491613')
-mycursor = db.cursor()
+# db = connection.MySQLConnection(user='sql11491613', password='eWFcPv5Ndt',
+#                                 host='35.157.16.43',
+#                                 database='sql11491613')
+# mycursor = db.cursor()
 
 #Columns in table "sessions":
 mycursor.execute("SHOW columns FROM sessions;")

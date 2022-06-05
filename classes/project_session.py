@@ -23,6 +23,47 @@ class ActiveProject:
                 self.startDate = project[2]
                 self.endDate = project[4]
 
+    def select_all_projects(self):
+        db = Db()
+        query = "SELECT projectID, albumName, lastName, firstName \
+                 FROM projects p \
+                 JOIN users u \
+                 ON p.artistID = u.userID"
+        db_results = db.db_select(query)
+
+        projects: list[ActiveProject] = []
+        if db_results:
+            for result in db_results:
+                project = ActiveProject()
+                project.projectID = result[0]
+                project.album_name = result[1]
+                project.last_name = result[2]
+                project.first_name = result[3]
+                projects.append(project)
+
+        return projects
+
+    def select_all_active_projects(self):
+        db = Db()
+        query = "SELECT projectID, albumName, lastName, firstName \
+                 FROM projects p \
+                 JOIN users u \
+                 ON p.artistID = u.userID \
+                 WHERE endDate IS NULL"
+        db_results = db.db_select(query)
+
+        projects: list[ActiveProject] = []
+        if db_results:
+            for result in db_results:
+                project = ActiveProject()
+                project.projectID = result[0]
+                project.album_name = result[1]
+                project.last_name = result[2]
+                project.first_name = result[3]
+                projects.append(project)
+
+        return projects
+
 
 
 class ActiveSession:
@@ -45,3 +86,25 @@ class ActiveSession:
             self.setupID = result[2]
             self.date = result[3]
             self.sessiontypeID = result[4]
+
+    # retrieve all sessions from database
+    def select_all_sessions(self):
+        db = Db()
+        query = "SELECT s.sessionID, sessiontypeName, setupName, setupDescription \
+                 FROM sessions s JOIN sessiontypes st \
+                 ON s.sessiontypeID = st.sessiontypeID \
+                 JOIN setups stps \
+                 ON s.setupID = stps.setupID"
+        db_results = db.db_select(query)
+
+        sessions: list[ActiveSession] = []
+        if db_results:
+            for result in db_results:
+                session = ActiveSession()
+                session.sessionID = result[0]
+                session.session_type_name = result[1]
+                session.setup_name = result[2]
+                session.setup_description = result[3]
+                sessions.append(session)
+
+        return sessions
