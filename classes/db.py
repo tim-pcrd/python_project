@@ -85,7 +85,7 @@ class Db:
             db_cursor.execute(query, data)
             self.db.commit()
 
-            #return True (geslaagd) of False  
+            #return True (geslaagd) of False
             return db_cursor.rowcount > 0
 
         except mysql.connector.Error as error:

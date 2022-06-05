@@ -83,7 +83,7 @@ class User:
 
     def select_user(self, id):
         db = Db()
-        query = 'SELECT u.*, r.role FROM users u inner join roles r on r.roleID = u.roleID WHERE userID = %s inner join '
+        query = 'SELECT u.*, r.role FROM users u inner join roles r on r.roleID = u.roleID WHERE userID = %s'
         data = (id,)
         result = db.db_select_one(query,data)
 
@@ -100,7 +100,7 @@ class User:
 
     def select_all_users(self, exludedId = 0):
         db = Db()
-        query = "SELECT * FROM users where userID != %s"
+        query = "SELECT u.*, r.role FROM users u inner join roles r on r.roleID = u.roleID where userID != %s order by lastName"
         data = (exludedId,)
         db_results = db.db_select(query, data)
 
@@ -116,11 +116,25 @@ class User:
                 user.password = result[5]
                 user.stage_name = result[6]
                 user.manager = result[7]
+                user.role = result[8]
                 users.append(user)
 
         return users
 
+    
+    def save_user(self):
+        print(self)
+        db = Db()
+        query = "UPDATE users SET firstName = %s, lastName = %s, emailAddress = %s, roleID = %s WHERE userID = %s"
+        data = (self.first_name, self.last_name, self.email, self.roleId, self.userID);
+        db_result = db.db_update(query, data)
+
+        if db_result:
+            return True
+        else:
+            return False
+
 
     def __str__(self) -> str:
-        return f'{self.userID}, {self.roleId}, {self.first_name}, {self.last_name}'
+        return f'{self.userID}, {self.roleId}, {self.first_name}, {self.last_name}, {self.role}'
         

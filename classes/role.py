@@ -16,11 +16,15 @@ class Role:
         if db_results:
             for result in db_results:
                 role = Role()
-                role.roleId = result[0]
+                role.roleID = result[0]
                 role.role = result[1]
                 roles.append(role)
 
         return roles
+
+
+    def __str__(self) -> str:
+        return f'{self.roleID}, {self.role}' 
 
 
         
