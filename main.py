@@ -4,6 +4,7 @@ import settings
 from classes.user import User
 from pages.login_page import *
 from pages.profile_page import Profile_Page
+from pages.session_page import Session_Page
 import settings
 
 from pages.setup_page import Setup_Page
@@ -52,6 +53,16 @@ class Main_Win:
         #Project menu
         project_menu = Menu(menubar, tearoff=False)
 
+
+        #Session menu
+        session_menu = Menu(menubar, tearoff=False)
+
+        session_menu.add_command(
+            label='Choose session+setup',
+            command=self.open_session
+        )
+
+        #setup menu
         setup_menu = Menu(menubar, tearoff=False)
 
         setup_menu.add_command(
@@ -62,6 +73,7 @@ class Main_Win:
 
         menubar.add_cascade(label='Gebruiker', menu=user_menu)
         menubar.add_cascade(label='Project', menu=project_menu)
+        menubar.add_cascade(label='Session', menu=session_menu)
         menubar.add_cascade(label='Setup', menu=setup_menu)
 
 
@@ -81,6 +93,11 @@ class Main_Win:
         self.destroy_all_pages()
         self.users_admin_page = Users_Admin_Page(self.main_win, width= settings.WIDTH, height=settings.HEIGHT, user=user)
         self.users_admin_page.place(x=0, y=0)
+
+    def open_session(self):
+        self.destroy_all_pages()
+        self.session_page = Session_Page(self.main_win, width=settings.WIDTH, height=settings.HEIGHT,user=user)
+        self.session_page.place(x=0, y=0)
 
     def open_setup(self):
         self.destroy_all_pages()

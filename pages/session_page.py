@@ -1,6 +1,12 @@
 import tkinter as tk
+from tkinter import *
 from tkinter import ttk
-from tkinter.messagebox import showinfo
+from tkinter.ttk import Combobox
+from mysql.connector import (connection)
+from classes.db import Db
+from classes.user import User
+import settings
+import classes.setup
 
 from mysql.connector import (connection)
 
@@ -9,21 +15,47 @@ db = connection.MySQLConnection(user='sql11491613', password='eWFcPv5Ndt',
                                 database='sql11491613')
 mycursor = db.cursor()
 
-#Columns in table "sessions":
-mycursor.execute("SHOW columns FROM sessions;")
-for x in mycursor:
-    print(x)
 
-#Data in table "sessions":
-mycursor.execute("SELECT * FROM sessions;")
-for x in mycursor:
-    print(x)
+class Session_Page(Frame):
+    def __init__(self, root, width, height, user: User):
+        super().__init__(root, width=width, height=height)
 
-mycursor.execute("SELECT sessionID FROM sessions;")
-for x in mycursor:
-    print(x)
+        self.var1 = tk.StringVar()
+        self.l = tk.Label(self, bg='yellow', fg='black', font=('Arial', 12), width=10, textvariable=self.var1)
+        self.l.pack()
+
+        self.b1 = tk.Button(self, text='Select session', width=20, height=2, command=self.selected_session)
+        self.b1.pack()
+
+        self.lb = tk.Listbox(self)
+        self.lb.pack()
+
+        # Create a new session:
+
+        self.b2 = tk.Button(self, text='Create new session', width=20, height=2)  # command=
+        self.b2.pack()
+
+    # Copy existing session:
+        self.b3 = tk.Button(self, text='Copy existing session', width=20, height=2)  # command=
+        self.b3.pack()
+
+        self.add_items_listbox()
 
 
+    # Add more items to the LISTBOX:
+    def add_items_listbox(self):
+        mycursor.execute("SELECT sessionID FROM sessions;")
+        for x in mycursor:
+            self.lb.insert('end', x)
+        self.lb.pack()
+
+
+    def selected_session(self):
+        value = self.lb.get(self.lb.curselection())
+        self.var1.set(value)
+
+
+'''
 #Create WINDOW "Session":
 window = tk.Tk()
 window.title('Session')
@@ -73,3 +105,5 @@ lb.pack()
 
 
 window.mainloop()
+
+'''
