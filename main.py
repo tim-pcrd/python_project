@@ -6,6 +6,7 @@ from pages.login_page import *
 from pages.profile_page import Profile_Page
 
 from pages.project_page import Project_Page
+from pages.project_data_page import Project_Data_Page
 from classes.project_session import ActiveSession
 # from pages.session_page import Session_Page (klasse is nog niet gedefinieerd)
 from pages.setup_page import Setup_Page
@@ -90,13 +91,20 @@ class Main_Win:
 
     def open_users_admin(self):
         self.destroy_all_pages()
-        self.users_admin_page = Users_Admin_Page(self.main_win, width= settings.WIDTH, height=settings.HEIGHT, user=user)
+        self.users_admin_page = Users_Admin_Page(self.main_win, width=settings.WIDTH, height=settings.HEIGHT, user=user)
         self.users_admin_page.place(x=0, y=0)
 
     def open_project(self):
         self.destroy_all_pages()
-        self.project_page = Project_Page(self.main_win, width=settings.WIDTH, height=settings.HEIGHT, user=user)
+        self.project_page = Project_Page(self.main_win, window_object_before_calling_mainloop, width=settings.WIDTH, height=settings.HEIGHT, user=user)
         self.project_page.place(x=0, y=0)
+
+    # display the selected project's data
+    def open_project_data(self, selected_project_id):
+        self.destroy_all_pages()
+        self.project_data_page = Project_Data_Page(self.main_win, selected_project_id, width=settings.WIDTH,
+                                                   height=settings.HEIGHT, user=user)
+        self.project_data_page.place(x=0, y=0)
 
     def open_setup(self):
         self.destroy_all_pages()
@@ -108,8 +116,7 @@ class Main_Win:
             page.destroy()
 
 main_win = Main_Win()
+print("Dit is main_win:", main_win)
+window_object_before_calling_mainloop = main_win
 
 main_win.mainloop_window()
-
-
-        

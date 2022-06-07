@@ -25,6 +25,27 @@ class ActiveProject:
                 self.startDate = project[2]
                 self.endDate = project[4]
 
+    def select_project(self, id):
+        db = Db()
+        query = 'SELECT p.projectID, p.albumName, u.lastName, u.firstName, p.startDate, p.endDate \
+                 FROM projects p \
+                 JOIN users u \
+                 ON p.artistID = u.userID \
+                 WHERE p.projectID = %s'
+        data = (id,)
+        result = db.db_select_one(query,data)
+
+        if result:
+            project = ActiveProject()
+            project.projectID = result[0]
+            project.album_name = result[1]
+            project.last_name = result[2]
+            project.first_name = result[3]
+            project.start_date = result[4]
+            project.end_date = result[5]
+
+        return project
+
     def select_all_projects(self):
         db = Db()
         query = "SELECT projectID, albumName, lastName, firstName \
@@ -135,6 +156,35 @@ class ActiveSession:
                 session.session_type_name = result[1]
                 session.setup_name = result[2]
                 session.setup_description = result[3]
+                sessions.append(session)
+
+        return sessions
+
+    def select_project_sessions(self, id):
+        db = Db()
+        query = "SELECT sessions.sessionID, projects.albumName, \
+                 sessiontypes.sessiontypeName, setups.setupName, \
+                 setups.setupDescription \
+                 FROM projects \
+                 JOIN sessions \
+                 ON projects.projectID = sessions.projectID \
+                 JOIN sessiontypes \
+                 ON sessiontypes.sessiontypeID = sessions.sessiontypeID \
+                 JOIN setups \
+                 ON setups.setupID = sessions.setupID \
+                 WHERE projects.projectID = %s"
+        data = (id,)
+        db_results = db.db_select(query, data)
+
+        sessions: list[ActiveSession] = []
+        if db_results:
+            for result in db_results:
+                session = ActiveSession()
+                session.sessionID = result[0]
+                session.album_name = result[1]
+                session.session_type_name = result[2]
+                session.setup_name = result[3]
+                session.setup_description = result[4]
                 sessions.append(session)
 
         return sessions
