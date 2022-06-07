@@ -15,11 +15,11 @@ class User:
         self.password = None
         self.role = None
 
-
-    def create_user(self,email, password, firstName, lastName):
+    @staticmethod
+    def create_user(email, password, firstName, lastName, roleId=None):
         db = Db()
         query = 'INSERT INTO users (emailAddress, password, firstName, lastName, roleID) VALUES (%s,%s,%s,%s,%s);'
-        data = (email, password, firstName, lastName, 1)
+        data = (email, password, firstName, lastName, roleId if roleId else 1)
         result = db.db_insert(query, data)
 
         return result
@@ -68,8 +68,8 @@ class User:
 
         return False
 
-
-    def check_email_exists(self, email):
+    @staticmethod
+    def check_email_exists(email):
         db = Db()
         query = "SELECT COUNT(*) FROM users where emailAddress = %s"
         data = (email,)
@@ -132,6 +132,7 @@ class User:
             return True
         else:
             return False
+
 
     def delete_user(self):
         db = Db()

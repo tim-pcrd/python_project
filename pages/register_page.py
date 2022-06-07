@@ -87,15 +87,14 @@ class Register_Page:
             self.error_message("*Wachtwoorden komen niet overeen!")
             return
 
-        user = User()
 
         # Controleer of email al bestaat in database
-        if user.check_email_exists(email):
+        if User.check_email_exists(email):
             self.error_message("*Dit emailadres is al in gebruik")
             return
 
 
-        result = user.create_user(email, password, first_name, last_name)
+        result = User.create_user(email, password, first_name, last_name)
         if result > 0:
             self.exit_register()
         else:

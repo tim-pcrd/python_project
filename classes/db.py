@@ -27,7 +27,7 @@ class Db:
             return None
 
         finally:
-            if self.db.is_connected():
+            if self.db and self.db.is_connected():
                 db_cursor.close()
                 self.db.close()
                 
@@ -49,7 +49,7 @@ class Db:
             return None
 
         finally:
-            if self.db.is_connected():
+            if self.db and self.db.is_connected():
                 db_cursor.close()
                 self.db.close()
 
@@ -72,7 +72,7 @@ class Db:
             return 0;
 
         finally:
-            if self.db.is_connected():
+            if self.db and self.db.is_connected():
                 db_cursor.close()
                 self.db.close()
 
@@ -93,7 +93,7 @@ class Db:
             return False
 
         finally:
-            if self.db.is_connected():
+            if self.db and self.db.is_connected():
                 db_cursor.close()
                 self.db.close()
 
@@ -115,7 +115,7 @@ class Db:
             return False
         
         finally:
-            if self.db.is_connected():
+            if self.db and self.db.is_connected():
                 db_cursor.close()
                 self.db.close()
 
@@ -127,5 +127,8 @@ class Db:
             password='eWFcPv5Ndt',
             host='35.157.16.43',
             database='sql11491613')
+
+
+
 
 

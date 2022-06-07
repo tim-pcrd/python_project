@@ -1,3 +1,4 @@
+from distutils.dep_util import newer_pairwise
 from tkinter import ANCHOR, E, END, SOLID, W, Button, Entry, Frame, Label, Listbox, OptionMenu, StringVar
 from tkinter.messagebox import askyesno, askyesnocancel
 from tkinter.ttk import Combobox
@@ -14,14 +15,19 @@ class Users_Admin_Page(Frame):
         self.message= None
         self.selected_user = None
 
+        self.root = root
+
         self.configure(bg=settings.PROGRAM_BG)
         
         self.users_list_label = Label(self, text="Gebruikers:", bg=settings.PROGRAM_BG, anchor=W, font=("Arial", 12))
         self.users_list_label.place(x=20, rely=0.05, height=20, width=120)
 
         self.users_list = Listbox(self, exportselection=False)
-        self.users_list.place(x=20, rely=0.100, height=300, width=180)
+        self.users_list.place(x=20, rely=0.100, height=350, width=180)
         self.users_list.bind('<<ListboxSelect>>', self.get_selected_user)
+
+        self.new_user_btn = Button(self, text="Nieuwe gebruiker", command=self.show_new_user_frame, bg=settings.BUTTON_BG)
+        self.new_user_btn.place(x=20, rely=0.700, width=180)
 
         self.fill_userslist()
 
@@ -30,58 +36,58 @@ class Users_Admin_Page(Frame):
 
 
         self.selected_user_label = Label(self, text="Geselecteerde gebruiker:", bg=settings.PROGRAM_BG, anchor=W, font=("Arial", 12))
-        self.selected_user_label.place(relx=0.600, rely=0.05, height=20, width=200)
+        self.selected_user_label.place(relx=0.230, rely=0.05, height=20, width=200)
         
         self.first_name = Label(self, text="Voornaam:", bg=settings.PROGRAM_BG,anchor=W)
-        self.first_name.place(relx=0.600, rely=0.100, height=20, width=120)
+        self.first_name.place(relx=0.230, rely=0.100, height=20, width=120)
 
         self.first_name_box = Entry(self)
-        self.first_name_box.place(relx=0.720, rely=0.100, height=20, width=180)
+        self.first_name_box.place(relx=0.350, rely=0.100, height=20, width=180)
 
         self.last_name = Label(self, text="Familienaam:", bg=settings.PROGRAM_BG,anchor=W)
-        self.last_name.place(relx=0.600, rely=0.150, height=20, width=100)
+        self.last_name.place(relx=0.230, rely=0.150, height=20, width=100)
 
         self.last_name_box = Entry(self)
-        self.last_name_box.place(relx=0.720, rely=0.150, height=20, width=180)
+        self.last_name_box.place(relx=0.350, rely=0.150, height=20, width=180)
 
         self.email = Label(self, text="Email:", bg=settings.PROGRAM_BG, anchor=W)
-        self.email.place(relx=0.600, rely=0.200, height=20, width=120)
+        self.email.place(relx=0.230, rely=0.200, height=20, width=120)
 
         self.email_box = Entry(self)
-        self.email_box.place(relx=0.720, rely=0.200, height=20, width=180)
+        self.email_box.place(relx=0.350, rely=0.200, height=20, width=180)
 
         self.role = Label(self, text="Rol:", bg=settings.PROGRAM_BG, anchor=W)
-        self.role.place(relx=0.600, rely=0.25, height=20, width=120)
+        self.role.place(relx=0.230, rely=0.25, height=20, width=120)
 
         self.roles = Role.get_all_roles()
         
         self.role_combobox = Combobox(self, values=[x.role for x in self.roles])
-        self.role_combobox.place(relx=0.720, rely=0.25, height=20, width=180)
+        self.role_combobox.place(relx=0.350, rely=0.25, height=20, width=180)
 
 
         self.save_btn = Button(self, text='Opslaan', command=self.save_selected_user, bg=settings.BUTTON_BG)
-        self.save_btn.place(relx=0.720, rely=0.30, width=180)
+        self.save_btn.place(relx=0.350, rely=0.30, width=180)
 
         self.password = Label(self, text="Nieuw wachtwoord", bg=settings.PROGRAM_BG)
-        self.password.place(relx=0.600, rely=0.45, height=20, width=120)
+        self.password.place(relx=0.230, rely=0.40, height=20, width=120)
 
         self.repeat_password = Label(self, text="Herhaal wachtwoord", bg=settings.PROGRAM_BG)
-        self.repeat_password.place(relx=0.600, rely=0.50, height=20, width=120)
+        self.repeat_password.place(relx=0.230, rely=0.45, height=20, width=120)
 
         self.password_box = Entry(self)
         self.password_box.configure(show="*")
-        self.password_box.place(relx=0.720, rely=0.45, height=20, width=180)
+        self.password_box.place(relx=0.350, rely=0.40, height=20, width=180)
 
         self.repeat_password_box = Entry(self)
         self.repeat_password_box.configure(show="*")
-        self.repeat_password_box.place(relx=0.720, rely=0.50, height=20, width=180)
+        self.repeat_password_box.place(relx=0.350, rely=0.45, height=20, width=180)
 
         self.save_password_btn = Button(self, text='Wachtwoord wijzigen', command=self.change_password_selected_user, bg=settings.BUTTON_BG)
-        self.save_password_btn.place(relx=0.720, rely=0.55, width=180)
+        self.save_password_btn.place(relx=0.350, rely=0.50, width=180)
 
 
         self.delete_user_btn = Button(self, text='Gebruiker verwijderen', command=self.delete_selected_user, bg=settings.DANGER_BUTTON_BG, fg=settings.DANGER_BUTTON_FG)
-        self.delete_user_btn.place(relx=0.720, rely=0.70, width=180)
+        self.delete_user_btn.place(relx=0.350, rely=0.60, width=180)
 
 
 
@@ -191,17 +197,106 @@ class Users_Admin_Page(Frame):
         self.repeat_password_box.delete("0",END)
 
 
+    def show_new_user_frame(self):
+
+        self.new_user_frame = Frame(self, width=350, height=settings.HEIGHT, bg=settings.PROGRAM_BG)
+        self.new_user_frame.place(relx=0.650, y=0, width=350, height=settings.HEIGHT)
+
+
+        self.new_user_label = Label(self.new_user_frame, text="Nieuwe gebruiker:", bg=settings.PROGRAM_BG, anchor=W, font=("Arial", 12))
+        self.new_user_label.place(x=10, rely=0.05, height=20, width=200)
+        
+        self.new_first_name = Label(self.new_user_frame, text="Voornaam:", bg=settings.PROGRAM_BG,anchor=W)
+        self.new_first_name.place(x=10, rely=0.100, height=20, width=120)
+
+        self.new_first_name_box = Entry(self.new_user_frame)
+        self.new_first_name_box.place(x=130, rely=0.100, height=20, width=180)
+
+        self.new_last_name = Label(self.new_user_frame, text="Familienaam:", bg=settings.PROGRAM_BG,anchor=W)
+        self.new_last_name.place(x=10, rely=0.150, height=20, width=100)
+
+        self.new_last_name_box = Entry(self.new_user_frame)
+        self.new_last_name_box.place(x=130, rely=0.150, height=20, width=180)
+
+        self.new_email = Label(self.new_user_frame, text="Email:", bg=settings.PROGRAM_BG, anchor=W)
+        self.new_email.place(x=10, rely=0.200, height=20, width=120)
+
+        self.new_email_box = Entry(self.new_user_frame)
+        self.new_email_box.place(x=130, rely=0.200, height=20, width=180)
+
+        self.new_role = Label(self.new_user_frame, text="Rol:", bg=settings.PROGRAM_BG, anchor=W)
+        self.new_role.place(x=10, rely=0.25, height=20, width=120)
+
+        self.new_role_combobox = Combobox(self.new_user_frame, values=[x.role for x in self.roles])
+        self.new_role_combobox.place(x=130, rely=0.25, height=20, width=180)
+
+        self.new_password = Label(self.new_user_frame, text="Nieuw wachtwoord", bg=settings.PROGRAM_BG,anchor=W)
+        self.new_password.place(x=10, rely=0.30, height=20, width=120)
+
+        self.new_repeat_password = Label(self.new_user_frame, text="Herhaal wachtwoord", bg=settings.PROGRAM_BG, anchor=W)
+        self.new_repeat_password.place(x=10, rely=0.35, height=20, width=120)
+
+        self.new_password_box = Entry(self.new_user_frame)
+        self.new_password_box.configure(show="*")
+        self.new_password_box.place(x=130, rely=0.30, height=20, width=180)
+
+        self.new_repeat_password_box = Entry(self.new_user_frame)
+        self.new_repeat_password_box.configure(show="*")
+        self.new_repeat_password_box.place(x=130, rely=0.35, height=20, width=180)
+
+        self.save_new_user_btn = Button(self.new_user_frame, text='Opslaan', command=self.save_new_user, bg=settings.BUTTON_BG)
+        self.save_new_user_btn.place(x=130, rely=0.40, width=180)
+
+        self.cancel_new_user_btn = Button(self.new_user_frame, text='Annuleer', command=self.cancel_new_user, bg=settings.DANGER_BUTTON_BG, fg=settings.DANGER_BUTTON_FG)
+        self.cancel_new_user_btn.place(x=130, rely=0.45, width=180)
+
+
+
+    def save_new_user(self):
+        first_name = self.new_first_name_box.get()
+        last_name = self.new_last_name_box.get()
+        email = self.new_email_box.get()
+        roleId = self.roles[self.new_role_combobox.current()].roleID
+        new_password = self.new_password_box.get()
+        new_repeat_password = self.new_repeat_password_box.get()
+
+        if not first_name or not last_name or not email or not roleId or not new_password or not new_repeat_password:
+            self.error_message("Niet alle velden zijn ingevuld")
+            return
+
+        if new_password != new_repeat_password:
+            self.error_message("Wachtwoorden komen niet overeen")
+            return
+
+
+
+        result = User.create_user(email, new_password, first_name, last_name, roleId)
+
+        if result:
+            self.success_message("Successvol opgeslagen")
+        else:
+            self.error_message("Er is een probleem opgetreden")
+
+        self.fill_userslist()
+        self.new_user_frame.destroy()
+        self.clear_textboxes()
+
+
+    def cancel_new_user(self):
+        self.new_user_frame.destroy()
+
+
     def error_message(self, message):
         self.clear_message()
         self.message = Label(self, text=f"{message}", bg=settings.PROGRAM_BG, fg='red',font=("Arial", 12), anchor=W, padx=5, 
             highlightbackground="red", highlightcolor="red", highlightthickness=3)
-        self.message.place(x=10, rely=0.920, height=40, width=400)
+        self.message.place(x=15, rely=0.910, height=40, width=400)
     
     def success_message(self, message):
         self.clear_message()
         self.message = Label(self, text=f"{message}", bg=settings.PROGRAM_BG, fg='green',font=("Arial", 12), anchor=W, padx=5,
             highlightbackground="green", highlightcolor="green", highlightthickness=3)
-        self.message.place(x=10, rely=0.920, height=40, width=400)
+        self.message.place(x=15, rely=0.910, height=40, width=400)
 
     def clear_message(self):
         if self.message:

@@ -14,32 +14,6 @@ user = User()
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                                                                  
 login_page = Login_Page(user) 
 login_page.mainloop_window()
