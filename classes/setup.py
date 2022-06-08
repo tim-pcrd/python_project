@@ -1,11 +1,5 @@
 from classes.db import Db
 
-
-
-
-
-
-
 class ActiveSetup:
     def __init__(self, setupID):
         self.setupID=setupID

@@ -1,21 +1,19 @@
 from classes.db import Db
 
 
-
-
 class ActiveProject:
     def __init__(self):
-        self.projectID= None
-        self.albumName= None
-        self.artistID= None
+        self.projectID = None
+        self.albumName = None
+        self.artistID = None
         self.startDate = None
         self.endDate = None
 
     def load_project(self, projectID):
-        db=Db()
+        db = Db()
         query = "SELECT * FROM projects; WHERE projectID=%s"
         data = projectID
-        result = db.db_select(query,data)
+        result = db.db_select(query, data)
 
         if result and len(result) == 1:
             for project in result:
@@ -33,7 +31,7 @@ class ActiveProject:
                  ON p.artistID = u.userID \
                  WHERE p.projectID = %s'
         data = (id,)
-        result = db.db_select_one(query,data)
+        result = db.db_select_one(query, data)
 
         if result:
             project = ActiveProject()
@@ -117,19 +115,20 @@ class ActiveProject:
 
         return False
 
+
 class ActiveSession:
     def __init__(self):
-        self.sessionID= None
+        self.sessionID = None
         self.projectID = None
         self.setupID = None
         self.date = None
         self.sessiontypeID = None
 
     def load_session(self, sessionID):
-        db=Db()
+        db = Db()
         query = "SELECT * FROM session; WHERE sessionID=%s"
         data = sessionID
-        result = db.db_select_one(query,data)
+        result = db.db_select_one(query, data)
 
         if result:
             self.sessionID = result[0]

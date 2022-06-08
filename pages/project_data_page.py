@@ -1,4 +1,4 @@
-from tkinter import Button, Entry, Frame, Label, Listbox, messagebox, StringVar, ttk
+from tkinter import messagebox, ttk
 from tkinter import *
 import tkinter as tk
 from classes.user import User
@@ -22,6 +22,9 @@ class Project_Data_Page(Frame):
         # define string variables
         self.projectName = StringVar()
 
+        self.list_sessionIds = []
+        self.list_chainIds = []
+
         # define widgets
         # show selected project
         self.selected_project = Label(self, text="selected project:", bg=settings.PROGRAM_BG)
@@ -43,11 +46,11 @@ class Project_Data_Page(Frame):
                                        width=20)
         button_select_session.place(relx=0.75, rely=0.31)
 
-        self.project_chains = Label(self, text="chains pertaining to selected session's setup:", bg=settings.PROGRAM_BG)
-        self.project_chains.place(relx=0.1, rely=0.43, height=20)
+        self.setup_chains = Label(self, text="chains pertaining to selected session's setup:", bg=settings.PROGRAM_BG)
+        self.setup_chains.place(relx=0.1, rely=0.43, height=20)
 
-        self.project_chains_list = Listbox(self)
-        self.project_chains_list.place(relx=0.1, rely=0.48, height=80, relwidth=0.6)
+        self.setup_chains_list = Listbox(self)
+        self.setup_chains_list.place(relx=0.1, rely=0.48, height=80, relwidth=0.6)
         # listbox is filled when button_select_session button is clicked
 
         # list the selected chain's gear units
@@ -63,8 +66,8 @@ class Project_Data_Page(Frame):
         # listbox is filled when button_select_chain button is clicked
 
     # define instance methods
-    def fill_project_table(self, id):
-        retrieved_project = self.project.select_project(id)
+    def fill_project_table(self, project_id):
+        retrieved_project = self.project.select_project(project_id)
 
         self.selected_project_table.place(relx=0.2, rely=0.1)
         self.selected_project_table['columns'] = ('project', 'artist', 'start date', 'end date')
@@ -84,33 +87,56 @@ class Project_Data_Page(Frame):
                                                                retrieved_project.start_date,
                                                                retrieved_project.end_date))
 
-    def fill_sessions_list(self, id):
-        sessions = self.session.select_project_sessions(id)
+    def fill_sessions_list(self, project_id):
+        sessions = self.session.select_project_sessions(project_id)
         if len(sessions) > 0:
+            self.list_sessionIds.clear()
             for session in sessions:
-                self.project_sessions_list.insert(session.sessionID, f"ID: {session.sessionID} / {session.album_name}, "
-                                                                     f"type {session.session_type_name}, "
-                                                                     f"{session.setup_name}, "
-                                                                     f"{session.setup_description}")
+                self.list_sessionIds.append(session.sessionID)
+                self.project_sessions_list.insert(END, f"ID: {session.sessionID} / {session.album_name}, "
+                                                       f"type {session.session_type_name}, "
+                                                       f"{session.setup_name}, "
+                                                       f"{session.setup_description}")
         else:
-            self.project_sessions_list.insert(0, "No sessions have been assigned to this project.")
+            pass
 
     def fill_chains_list(self):
-        selected_id = self.project_sessions_list.curselection()
-        if len(selected_id) == 0:
-            messagebox.showerror("Error", "Please select an item in the listbox")
+        self.setup_chains_list.delete(0, tk.END)
+        self.chain_gearunits_list.delete(0, tk.END)
+        selection = self.project_sessions_list.curselection()
+        if len(selection) == 0:
+            messagebox.showerror("Foutmelding", "Selecteer indien mogelijk een sessie")
             return
-        if (isinstance(selected_id[0], int)):
-            chains = self.chain.select_setup_chains(selected_id[0])
+        selected_list_index = self.project_sessions_list.curselection()[0]
+        selected_session_id = self.list_sessionIds[selected_list_index]
+        if isinstance(selected_session_id, int) and selected_session_id > 0:
+            chains = self.chain.select_setup_chains(selected_session_id)
+            print("Aantel ketens:", len(chains))
             if len(chains) > 0:
-                self.project_chains_list.delete(0, tk.END)
+                self.list_chainIds.clear()
                 for chain in chains:
-                    self.project_chains_list.insert(chain.chainID, f"{chain.chain_name} channel: {chain.channel}")
+                    self.list_chainIds.append(chain.chainID)
+                    self.setup_chains_list.insert(END, f"{chain.chain_name} channel: {chain.channel}")
             else:
-                self.project_chains_list.delete(0, tk.END)
-                self.project_chains_list.insert(0, "No chains have been assigned to this setup.")
-        else:
-            self.project_chains_list.insert(0, "No chains have been assigned to this setup.")
+                messagebox.showinfo("Info", "Aan deze sessie zijn nog geen ketens gekoppeld")
 
     def fill_gearunits_list(self):
-        pass
+        self.chain_gearunits_list.delete(0, tk.END)
+        selection = self.setup_chains_list.curselection()
+        if len(selection) == 0:
+            messagebox.showerror("Error", "Please select an item in the listbox")
+            return
+        selected_list_index = self.setup_chains_list.curselection()[0]
+        selected_chain_id = int(self.list_chainIds[selected_list_index])
+        print("Het geselecteerde CHAINID:", selected_chain_id)
+        if isinstance(selected_chain_id, int) and selected_chain_id > 0:
+            self.chain = Chain()
+            gearunits = self.chain.select_chain_gearunits(selected_chain_id)
+            if len(gearunits) > 0:
+                for gearunit in gearunits:
+                    self.chain_gearunits_list.insert(END, f"{gearunit.gearunit_name}, " 
+                                                          f"type: {gearunit.gearunit_type_name}, " 
+                                                          f"positie {gearunit.unit_position}")
+            else:
+                messagebox.showinfo("Info", "Er zijn nog geen gear units aan de geselecteerde keten gekoppeld")
+
