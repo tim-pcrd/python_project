@@ -1,15 +1,17 @@
-from tkinter import Button, Entry, Frame, Label, Listbox, messagebox, StringVar, ttk
+from tkinter import Button, Entry, Frame, Label, messagebox, StringVar, ttk
 from classes.user import User
 from classes.project_session import ActiveProject
 import settings
 
 
 class Project_Page(Frame):
-    def __init__(self, root, width, height, user: User):
+    def __init__(self, root, window_object, width, height, user: User):
         super().__init__(root, width=width, height=height)
         self.configure(bg=settings.PROGRAM_BG)
+        self.window_object = window_object
         self.user = User()
         self.project = ActiveProject()
+        self.message = ""      # to temporarily store error messages
 
         # define string variables
         self.projectName = StringVar()
@@ -36,22 +38,9 @@ class Project_Page(Frame):
         self.musician_name_cb = ttk.Combobox(self, textvariable=self.musicianName, state="readonly", height=5)
         self.musician_name_cb.place(relx=0.1, rely=0.33, relwidth=0.25)
         # retrieve musicians in order to fill combobox
-        self.fill_musician_name_cb(user)
+        self.fill_musician_name_cb(self.user)
 
         self.create_button_frame()
-
-        # self.sessions_lb = Label(self, width=30, text="Assign session(s) to project:", bg=settings.PROGRAM_BG, \
-        # anchor=E).grid(row=2, column=0)
-        # self.sessions_list = Listbox(self, width=40, height=8)
-        # self.session = ActiveSession()
-        # self.sessions = self.session.select_all_sessions()
-        # for session in self.sessions:
-        #     self.sessions_list.insert(session.sessionID, f"{session.session_type_name} {session.setup_name} \
-        #     {session.setup_description}")
-        # self.sessions_list.grid(row=2, column=1)
-        # apply padding to all widgets
-        # for child in self.winfo_children():
-        #     child.grid_configure(padx=10, pady=15)
 
         # Rename project section => define widgets
         self.label_rename = Label(self, text="Rename existing project", bg=settings.PROGRAM_BG)
@@ -123,7 +112,7 @@ class Project_Page(Frame):
         musicians = user.select_all_musicians(3)
         combo_values = []
         for musician in musicians:
-            combo_values.append(f"{musician.last_name} {musician.first_name}")
+            combo_values.append(f"{musician.userID} {musician.last_name} {musician.first_name}")
         self.musician_name_cb["values"] = combo_values
         self.musician_name_cb.current(0)
 
@@ -131,7 +120,7 @@ class Project_Page(Frame):
         ongoing_projects = self.project.select_all_active_projects()
         combo_values = []
         for project in ongoing_projects:
-            combo_values.append(f"{project.album_name} / {project.last_name} {project.first_name}")
+            combo_values.append(f"{project.projectID} {project.album_name} / {project.last_name} {project.first_name}")
         self.project_current_name_cb["values"] = combo_values
         self.project_current_name_cb.current(0)
 
@@ -139,7 +128,7 @@ class Project_Page(Frame):
         completable_projects = self.project.select_all_active_projects()
         combo_values = []
         for project in completable_projects:
-            combo_values.append(f"{project.album_name} / {project.last_name} {project.first_name}")
+            combo_values.append(f"{project.projectID} {project.album_name} / {project.last_name} {project.first_name}")
         self.project_completable_project_name_cb["values"] = combo_values
         self.project_completable_project_name_cb.current(0)
 
@@ -147,14 +136,14 @@ class Project_Page(Frame):
         all_projects = self.project.select_all_projects()
         combo_values = []
         for project in all_projects:
-            combo_values.append(f"{project.album_name} / {project.last_name} {project.first_name}")
+            combo_values.append(f"{project.projectID} {project.album_name} / {project.last_name} {project.first_name}")
         self.project_list_all_cb["values"] = combo_values
         self.project_list_all_cb.current(0)
 
     # button frames and their allocated buttons
     def create_button_frame(self):
         button_frame = Frame(self, bg=settings.PROGRAM_BG)
-        button_create = Button(button_frame, text="Create", bg=settings.BUTTON_BG, padx=20)
+        button_create = Button(button_frame, text="Create", command=self.create_project, bg=settings.BUTTON_BG, padx=20)
         button_reset = Button(button_frame, text="Reset", command=self.reset_create,
                               bg=settings.BUTTON_BG, padx=20)
         button_create.pack(side="left")
@@ -163,7 +152,8 @@ class Project_Page(Frame):
 
     def create_button_frame2(self):
         button_frame2 = Frame(self, bg=settings.PROGRAM_BG)
-        button_rename = Button(button_frame2, text="Rename", bg=settings.BUTTON_BG, padx=20)
+        button_rename = Button(button_frame2, text="Rename", command=self.rename_project, bg=settings.BUTTON_BG,
+                               padx=20)
         button_reset2 = Button(button_frame2, text="Reset", command=self.reset_rename, bg=settings.BUTTON_BG, padx=20)
         button_frame2.place(relx=0.1, rely=0.87, relwidth=0.25)
         button_rename.pack(side="left")
@@ -171,7 +161,8 @@ class Project_Page(Frame):
 
     def create_button_frame3(self):
         button_frame3 = Frame(self, bg=settings.PROGRAM_BG)
-        button_finalize = Button(button_frame3, text="Finalize", bg=settings.BUTTON_BG, padx=20)
+        button_finalize = Button(button_frame3, text="Finalize", command=self.finalize_project, bg=settings.BUTTON_BG,
+                                 padx=20)
         button_reset3 = Button(button_frame3, text="Reset", command=self.reset_finalize,
                                bg=settings.BUTTON_BG, padx=20)
         button_frame3.place(relx=0.5, rely=0.3, relwidth=0.25)
@@ -180,8 +171,80 @@ class Project_Page(Frame):
 
     def create_button_frame4(self):
         button_frame4 = Frame(self, bg=settings.PROGRAM_BG)
-        button_show = Button(button_frame4, text="Show", bg=settings.BUTTON_BG, padx=20)
+        button_show = Button(button_frame4, text="Show", command=self.show_project_data, bg=settings.BUTTON_BG, padx=20)
         button_reset4 = Button(button_frame4, text="Reset", command=self.reset_show, bg=settings.BUTTON_BG, padx=20)
         button_frame4.place(relx=0.5, rely=0.77, relwidth=0.25)
         button_show.pack(side="left")
         button_reset4.pack(side="right")
+
+    def create_project(self):
+        self.message = ""     # clear any previously set error messages
+
+        self.project.project_name = self.get_string(self.projectName.get(), "project name")
+
+        if self.message == "":
+            if self.musicianName.get():
+                item_db_index = self.get_db_id_of_selected_item(self.musician_name_cb)
+                result = self.project.add_project(self.project.project_name, item_db_index)
+                if isinstance(result, int):
+                    self.refill_comboboxes_with_modified_data()
+                    messagebox.showinfo("Success", "Project was successfully added to database.")
+            else:
+                self.message = "Please select a musician."
+                messagebox.showerror("Error", self.message)
+        else:
+            messagebox.showerror("Error", self.message)
+
+    def rename_project(self):
+        self.message = ""     # clear any previously set error messages
+
+        self.project.project_new_name = self.get_string(self.projectNewName.get(), "new name")
+
+        if self.message == "":
+            if self.projectCurrentName.get():
+                item_db_index = self.get_db_id_of_selected_item(self.project_current_name_cb)
+                result = self.project.rename_project(self.project.project_new_name, item_db_index)
+                if isinstance(result, int):
+                    self.refill_comboboxes_with_modified_data()
+                    messagebox.showinfo("Success", "Project was successfully renamed.")
+            else:
+                self.message = "Please select a currently existing project you want to rename."
+                messagebox.showerror("Error", self.message)
+        else:
+            messagebox.showerror("Error", self.message)
+
+    def finalize_project(self):
+        self.message = ""     # clear any previously set error messages
+
+        if self.projectCompletableProjectName.get():
+            item_db_index = self.get_db_id_of_selected_item(self.project_completable_project_name_cb)
+            result = self.project.finalize_project(item_db_index)
+            if isinstance(result, int):
+                self.refill_comboboxes_with_modified_data()
+                messagebox.showinfo("Success", "Project was successfully finalized.")
+        else:
+            self.message = "Please select a currently existing project you want to finalize."
+            messagebox.showerror("Error", self.message)
+
+    def show_project_data(self):
+        selected_project_id = self.get_db_id_of_selected_item(self.project_list_all_cb)
+        # print("Opgehaalde ID: " + str(selected_project_id))
+        self.window_object.open_project_data(selected_project_id)
+
+    def get_string(self, val, fieldName):
+        if len(val) >= 4:
+            return val
+        else:
+            self.message += f"Entry in field \"{fieldName}\" must consist of at least 4 characters.\n"
+
+    def get_db_id_of_selected_item(self, combobox):
+        selected_value = combobox.get()
+        if selected_value:
+            i = selected_value.find(" ")
+            idx = int(selected_value[0:i])
+            return idx
+
+    def refill_comboboxes_with_modified_data(self):
+        self.fill_project_current_name_combobox()
+        self.fill_project_completable_project_name_cb()
+        self.fill_project_list_all_cb()
