@@ -1,3 +1,4 @@
+from pages.home_page import Home_Page
 import pages.login_page
 from pages.users_admin_page import Users_Admin_Page
 import settings
@@ -36,6 +37,10 @@ class Main_Win:
 
         menubar = Menu(self.main_win)
         self.main_win.config(menu=menubar)
+        menubar.add_command(
+            label='Home',
+            command=self.open_home
+        )
 
         # User menu
         user_menu = Menu(menubar, tearoff=False)
@@ -91,6 +96,8 @@ class Main_Win:
         menubar.add_cascade(label='Session', menu=session_menu)
         menubar.add_cascade(label='Setup', menu=setup_menu)
 
+        self.open_home()
+
 
     def mainloop_window(self): 
         self.main_win.mainloop()
@@ -98,6 +105,11 @@ class Main_Win:
     def open_logout(self):
         self.destroy_all_pages()
         exit()
+
+    def open_home(self):
+        self.destroy_all_pages()
+        self.home_page = Home_Page(self.main_win, width=settings.WIDTH, height=settings.HEIGHT, user=user)
+        self.home_page.place(x=0, y=0)
 
     def open_profile(self):
         self.destroy_all_pages()
