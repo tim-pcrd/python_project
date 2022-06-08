@@ -14,6 +14,11 @@ db = connection.MySQLConnection(user='sql11491613', password='eWFcPv5Ndt',
                                 host='35.157.16.43',
                                 database='sql11491613')
 
+
+
+# db = connection.MySQLConnection(user='sql11491613', password='eWFcPv5Ndt',
+#                                  host='35.157.16.43',
+#                                  database='sql11491613')
 mycursor = db.cursor()
 
 

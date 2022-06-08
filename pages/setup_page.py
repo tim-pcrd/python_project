@@ -7,6 +7,9 @@ from classes.db import Db
 from classes.user import User
 import settings
 import classes.setup
+import bcrypt
+
+
 
 
 db = connection.MySQLConnection(user='sql11491613', password='eWFcPv5Ndt',
@@ -36,6 +39,9 @@ class Setup_Page(Frame):
         #setup
         self.configure(bg=settings.PROGRAM_BG)
         self.user = user
+
+
+
 
         self.label_setup= Label(self, text="1) Kies setup:" )
         #self.label_setup.pack(side = LEFT, fill = BOTH)
@@ -103,10 +109,13 @@ class Setup_Page(Frame):
         self.entry_newchain= Entry(self, width= 20, bg= "white")
         self.entry_newchain.place(relx=0.3,rely=0.55)
 
-        self.but_cr_setup = Button(self, text="maak chain", command=self.write_new_chain, pady=5)
+        self.but_cr_chain = Button(self, text="maak chain", command=self.write_new_chain, pady=5)
         #self.but_cr_setup.pack(side = RIGHT, fill = BOTH)
-        self.but_cr_setup.place(relx=0.3, rely=0.7)
+        self.but_cr_chain.place(relx=0.3, rely=0.6)
 
+        self.but_update_chain = Button(self, text="update chain", command=self.update_chain, pady=5)
+        #self.but_cr_setup.pack(side = RIGHT, fill = BOTH)
+        self.but_update_chain.place(relx=0.3, rely=0.7)
 
 
 
@@ -268,6 +277,9 @@ class Setup_Page(Frame):
         self.box_setup.update()
 
 
+    def update_chain(self):
+        pass
+
 
     def write_new_setup(self):
         db = Db()
@@ -289,8 +301,8 @@ class Setup_Page(Frame):
 
         self.entry_newsetup.delete(0, 'end')
         self.entry_newsetup_desc.delete(0, 'end')
-
-        self.box_setup.update()
+        self.box_setup.delete(0, 'end')
+        self.get_setups()
 
 
     def write_new_chain(self):
@@ -308,6 +320,7 @@ class Setup_Page(Frame):
 
     #setups ophalen uit database
     def get_setups(self):
+        self.box_setup.delete(0, END)
         mycursor.execute("SELECT setupID, setupName , setupDescription FROM setups;")
         for x in mycursor:
             self.box_setup.insert(END, x)
@@ -325,9 +338,16 @@ class Setup_Page(Frame):
         for x in mycursor:
             self.box_gear.insert(END, x)
 
+#---------------refreshes--------------
 
+    def refresh_s(self):
+        pass
 
+    def refresh_c(self):
+        pass
 
+    def refresh_g(self):
+        pass
 
 
 
