@@ -62,7 +62,7 @@ class Project_Data_Page(Frame):
         self.chain_gearunits.place(relx=0.1, rely=0.65, height=20)
 
         self.chain_gearunits_list = Listbox(self)
-        self.chain_gearunits_list.place(relx=0.1, rely=0.7, height=80, relwidth=0.5)
+        self.chain_gearunits_list.place(relx=0.1, rely=0.7, height=80, relwidth=0.6)
         # listbox is filled when button_select_chain button is clicked
 
     # define instance methods
@@ -130,6 +130,7 @@ class Project_Data_Page(Frame):
         selected_chain_id = int(self.list_chainIds[selected_list_index])
         print("Het geselecteerde CHAINID:", selected_chain_id)
         if isinstance(selected_chain_id, int) and selected_chain_id > 0:
+            # new class instance with an empty gearunits list
             self.chain = Chain()
             gearunits = self.chain.select_chain_gearunits(selected_chain_id)
             if len(gearunits) > 0:
@@ -139,4 +140,3 @@ class Project_Data_Page(Frame):
                                                           f"positie {gearunit.unit_position}")
             else:
                 messagebox.showinfo("Info", "Er zijn nog geen gear units aan de geselecteerde keten gekoppeld")
-
