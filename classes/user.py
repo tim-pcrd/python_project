@@ -1,4 +1,6 @@
+
 from classes.db import Db
+from classes.helper import Helper
 
 
 class User:
@@ -17,9 +19,10 @@ class User:
 
     @staticmethod
     def create_user(email, password, firstName, lastName, roleId=None):
+        password_hash = Helper.hash_password(password)
         db = Db()
         query = 'INSERT INTO users (emailAddress, password, firstName, lastName, roleID) VALUES (%s,%s,%s,%s,%s);'
-        data = (email, password, firstName, lastName, roleId if roleId else 1)
+        data = (email, password_hash, firstName, lastName, roleId if roleId else 1)
         result = db.db_insert(query, data)
 
         return result
@@ -27,17 +30,18 @@ class User:
     
     def login_user(self, email, password):
         db = Db()
-        query = 'SELECT u.*, r.role FROM users u inner join roles r on r.roleID = u.roleID WHERE emailAddress = %s AND password = %s'
-        data = (email, password)
+        query = 'SELECT u.*, r.role FROM users u inner join roles r on r.roleID = u.roleID WHERE emailAddress = %s'
+        data = (email,)
         result = db.db_select_one(query,data)
 
-        if result:
+        if result and Helper.check_password(password, result[5]):
+
             self.userID = result[0]
             self.roleId = result[1]
             self.first_name = result[3]
             self.last_name = result[2]
             self.email = result[4]
-            self.password = result[5]
+            # self.password = result[5]
             self.stage_name = result[6]
             self.manager = result[7]
             self.role = result[8]
@@ -57,9 +61,10 @@ class User:
 
 
     def change_password(self, password):
+        password_hash = Helper.hash_password(password)
         db = Db()
         query = "UPDATE users set password = %s where userID = %s"
-        data = (password, self.userID)
+        data = (password_hash, self.userID)
         result =db.db_update(query, data)
 
         if result:
@@ -93,7 +98,7 @@ class User:
             self.first_name = result[3]
             self.last_name = result[2]
             self.email = result[4]
-            self.password = result[5]
+            # self.password = result[5]
             self.stage_name = result[6]
             self.manager = result[7]
             self.role = result[8]
@@ -113,7 +118,7 @@ class User:
                 user.first_name = result[3]
                 user.last_name = result[2]
                 user.email = result[4]
-                user.password = result[5]
+                # user.password = result[5]
                 user.stage_name = result[6]
                 user.manager = result[7]
                 user.role = result[8]
@@ -142,6 +147,7 @@ class User:
 
         return db_result
 
+
             
     def select_all_musicians(self, roleId):
         db = Db()
@@ -158,7 +164,7 @@ class User:
                 user.first_name = result[3]
                 user.last_name = result[2]
                 user.email = result[4]
-                user.password = result[5]
+                # user.password = result[5]
                 user.stage_name = result[6]
                 user.manager = result[7]
                 musicians.append(user)
@@ -168,4 +174,6 @@ class User:
 
     def __str__(self) -> str:
         return f'{self.userID}, {self.roleId}, {self.first_name}, {self.last_name}, {self.role}'
+
+  
         
