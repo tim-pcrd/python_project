@@ -6,7 +6,6 @@ import settings
 
 class Register_Page:
     def __init__(self, register = Tk()):
-        print('init register page')
         self.register = register
         register.title("Registreren")
         register.geometry("550x400+400+200")
@@ -54,7 +53,7 @@ class Register_Page:
 
 
         self.register_button = Button(register, text="Registreer", bg=settings.BUTTON_BG)
-        self.register_button.place(relx=0.440, rely=0.600, height=30, width=60)
+        self.register_button.place(relx=0.440, rely=0.600, height=30, relwidth=0.35)
         self.register_button.configure(command=self.register_user)
 
         self.message = None

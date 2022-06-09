@@ -148,7 +148,5 @@ class Main_Win:
             page.destroy()
 
 main_win = Main_Win()
-print("Dit is main_win:", main_win)
-window_object_before_calling_mainloop = main_win
 
 main_win.mainloop_window()
