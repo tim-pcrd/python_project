@@ -2,6 +2,9 @@ from classes.db import Db
 
 
 
+
+#--------------ACTIVE SETUP-----------------
+
 class ActiveSetup:
     def __init__(self):
         self.setupID =          None
@@ -12,7 +15,7 @@ class ActiveSetup:
         return f'ActiveSetup contains:\nID=\t\t{self.setupID}\nName=\t{self.setupName}\ndesc=\t{self.setupDescription}'
 
 
-
+#haal een setup uit database en maak deze de actievesetup
     def load_setup(self, setupID):
         db=Db()
         query = "SELECT * FROM setups WHERE setupID=%s"
@@ -24,48 +27,46 @@ class ActiveSetup:
         self.setupName = result[1]
         self.setupDescription = result[2]
 
-
+#haalt alle setups op en zet in lijst
     def get_setuplist(self):
-        setuplist=[]
-        db=Db()
+        setuplist = []
+        db = Db()
         query = "SELECT setupID, setupName , setupDescription FROM setups;"
-        data =()
-        result =db.db_select(query, data)
+        data = ()
+        result = db.db_select(query, data)
         for x in result:
             setuplist.append(x)
         return setuplist
 
 
-
+#concerned haalt enkel de chains op die in de actieve setup zitten en zet in lijst
     def get_chainlist_concerned(self, setupID):
-        chainlist_concerned=[]
-        db=Db()
-        query = "SELECT setup_chain.chainsetupID, chains.chainID, chainName \
-                    FROM chains \
-                   JOIN setup_chain \
-                    ON   chains.chainID=setup_chain.chainID \
-                    WHERE setup_chain.setupID = %s ;"
-        data =[setupID, ]
-        result =db.db_select(query, data)
+        chainlist_concerned = []
+        db = Db()
+        query = "SELECT setup_chain.chain_setupID, chains.chainID, chainName \
+                        FROM chains \
+                       JOIN setup_chain \
+                        ON   chains.chainID=setup_chain.chainID \
+                        WHERE setup_chain.setupID = %s ;"
+        data = [setupID, ]
+        result = db.db_select(query, data)
         for x in result:
             chainlist_concerned.append(x)
         return chainlist_concerned
 
-
-        # chains: list[ActiveChain] = []
-        # if db_results:
-        #     for result in db_results:
-        #         chain = ActiveSession()
-        #         session.sessionID = result[0]
-        #         session.album_name = result[1]
-        #         session.session_type_name = result[2]
-        #         session.setup_name = result[3]
-        #         session.setup_description = result[4]
-        #         chains.append(chain)
-        #
-        # return chains
+#haalt alle chains op en zet ze in een lijst
+    def get_chainlist(self):
+        chainlist = []
+        db = Db()
+        query = "SELECT * FROM chains ORDER BY chainID ASC;"
+        data = []
+        result = db.db_select(query, data)
+        for x in result:
+            chainlist.append(x)
+        return chainlist
 
 
+#haalt een lijst op met alle gearunits
     def get_gearlist(self):
         gearlist=[]
         db=Db()
@@ -75,6 +76,10 @@ class ActiveSetup:
         for x in result:
             gearlist.append(x)
         return gearlist
+
+
+
+#--------------ACTIVE CHAIN-----------------
 
 
 class ActiveChain:
@@ -92,7 +97,7 @@ class ActiveChain:
         return f'ActiveChain contains:\nID=\t{self.chainID} \nName=\t{self.chainName} \n1=\t{self.pos1} \n2=\t{self.pos2} \n3=\t{self.pos3} \n4=\t{self.pos4} \n5=\t{self.pos5}'
 
 
-
+#haalt een chain uit de database met zijn gekoppelde gearunits en zet de naam ervan in activechain
     def select_chain(self, chainID):
         db = Db()
         query = """SELECT chains.chainID, chainName, unitPosition, gearunitName 
@@ -105,8 +110,7 @@ class ActiveChain:
                     WHERE chains.chainID = %s """
         data = [chainID]
         result = db.db_select(query, data)
-        #print(result)
-        #if result and len(result) == 1:
+
         for chain in result:
             self.chainID = chain[0]
             self.chainName = chain[1]
@@ -123,12 +127,11 @@ class ActiveChain:
 
 
 
+    def write_chain(self, setupID, chainID):
+        db = Db()
+        data=[setupID,chainID]
+        query="INSERT INTO setup_chain (`setupID`, `chainID`) VALUES (%s , %s );"
+        result = db.db_insert(query,data)
+        return result
 
 
-
-# ActiveChain.select_chain(ActiveChain,2)
-# print(ActiveChain())
-
-#ac=ActiveChain()
-#ac.select_chain(1)
-#print(ac)
