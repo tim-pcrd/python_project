@@ -74,10 +74,11 @@ class User:
         return False
 
     @staticmethod
-    def check_email_exists(email):
+    def check_email_exists(email, userId = 0):
         db = Db()
-        query = "SELECT COUNT(*) FROM users where emailAddress = %s"
-        data = (email,)
+
+        query = "SELECT COUNT(*) FROM users where emailAddress = %s and userID != %s"
+        data = (email, userId)
         result = db.db_select_one(query,data)
 
         if result and result[0] > 0 :
@@ -105,7 +106,7 @@ class User:
 
     def select_all_users(self, exludedId = 0):
         db = Db()
-        query = "SELECT u.*, r.role FROM users u inner join roles r on r.roleID = u.roleID where userID != %s order by lastName"
+        query = "SELECT u.*, r.role FROM users u inner join roles r on r.roleID = u.roleID where userID != %s and emailAddress != 'admin@mail.com' order by lastName"
         data = (exludedId,)
         db_results = db.db_select(query, data)
 

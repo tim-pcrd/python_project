@@ -1,78 +1,67 @@
 from tkinter import *
 from tkinter import messagebox
+from classes.helper import Helper
 from classes.user import User
 # from PIL import ImageTk,Image
 
 import settings
 
-class Login_Page:
+class Login_Page(Frame):
+    def __init__(self, root, main_win, width, height, user: User):
+        super().__init__(root, width=width, height=height)
 
-    def __init__(self,user: User,login = Tk()):
-    
-        self.login = login
-        login.title("Login")
-        login.geometry("550x230+400+200")
+        self.configure(bg=settings.PROGRAM_BG)
+
+        self.main_win = main_win
         self.user = user
 
-        self.login.configure(bg=settings.PROGRAM_BG)
-        self.login.resizable(False, False)
+        self.title = Label(self, text="Inloggen", bg=settings.PROGRAM_BG,font=("Arial", 16), fg='blue', anchor=W)
+        self.title.place(x=10, y=10, height=40, width=130)
 
 
-        # self.image_canvas = Canvas(login, width=80, height=80)
-        # self.image_canvas.place(x=0, y=0) 
-        # self.img = ImageTk.PhotoImage(Image.open("images/muziek.jpg"))  
-        # self.image_canvas.create_image(1, 1, anchor=NW, image=self.img) 
+        self.email = Label(self, text="Email:", bg=settings.PROGRAM_BG, anchor=W)
+        self.email.place(relx=0.250, rely=0.300, height=20, width=120)
+
+        self.password = Label(self, text="Wachtwoord:", bg=settings.PROGRAM_BG, anchor=W)
+        self.password.place(relx=0.250, rely=0.400, height=20, width=120)
 
 
-
-        #login form
-
-        self.email = Label(login, text="Email:", bg=settings.PROGRAM_BG)
-        self.email.place(relx=0.150, rely=0.298, height=20, width=120)
-
-        self.password = Label(login, text="Wachtwoord:", bg=settings.PROGRAM_BG)
-        self.password.place(relx=0.150, rely=0.468, height=20, width=120)
-
-
-        self.login_button = Button(login, text="Login", bg=settings.BUTTON_BG)
-        self.login_button.place(relx=0.440, rely=0.638, height=30, width=60)
-        self.login_button.configure(command=self.login_user)
+      
 
         self.login_completed = IntVar()
 
-        self.exit_button = Button(login, text="Exit", bg=settings.BUTTON_BG)
-        self.exit_button.place(relx=0.614, rely=0.638, height=30, width=60)
-        self.exit_button.configure(command=self.exit_login)
+        self.email_box = Entry(self)
+        self.email_box.place(relx=0.440, rely=0.300, height=20, relwidth=0.30)
 
-
-        self.email_box = Entry(login)
-        self.email_box.place(relx=0.440, rely=0.298, height=20, relwidth=0.35)
-
-        self.password_box = Entry(login)
-        self.password_box.place(relx=0.440, rely=0.468, height=20, relwidth=0.35)
+        self.password_box = Entry(self)
+        self.password_box.place(relx=0.440, rely=0.400, height=20, relwidth=0.30)
         self.password_box.configure(show="*")
         self.password_box.configure(background="white")
 
 
         self.var = IntVar()
-        self.show_password = Checkbutton(login)
-        self.show_password.place(relx=0.150, rely=0.650, relheight=0.100, relwidth=0.250)
+        self.show_password = Checkbutton(self, anchor=W)
+        self.show_password.place(relx=0.25, rely=0.480, relheight=0.100, relwidth=0.200)
         self.show_password.configure(justify='left')
         self.show_password.configure(text='''Toon wachtwoord''',bg=settings.PROGRAM_BG)
         self.show_password.configure(variable=self.var, command=self.cb)
 
 
-        self.register_button = Button(login, text="Registeren", bg=settings.BUTTON_BG)
-        self.register_button.place(relx=0.85, rely=0.05, height=30, width=70)
+        self.login_button = Button(self, text="Login", bg=settings.BUTTON_BG)
+        self.login_button.place(relx=0.440, rely=0.500, height=30, relwidth=0.30)
+        self.login_button.configure(command=self.login_user)
+
+
+        self.register_button = Button(self, text="Registreren", bg=settings.BUTTON_BG)
+        self.register_button.place(relx=0.83, y=20, height=30, relwidth=0.15)
         self.register_button.configure(command=self.open_register)
+
 
         self.message= None
 
         
     def open_register(self):
-        from pages.register_page import Register_Page
-        self.register_win = Register_Page()
-        self.register_win.mainloop_window()
+        self.main_win.open_register()
 
     def cb(self, ):
 
@@ -85,26 +74,17 @@ class Login_Page:
         email= self.email_box.get()
         password = self.password_box.get()
 
+        if not email or not password:
+            Helper.error_message(self, 'Niet alle velden zijn ingevuld')
+            return
+
         self.user.login_user(email, password)
 
         if self.user.userID:
             self.user.logged_in = True
             if self.message:
                 self.message.place_forget()
-            self.login.destroy()
+            self.main_win.intialize_main()
             
         else:
-            self.error_message('Wachtwoord of email niet correct')
-
-    def error_message(self, message):
-        self.message = Label(self.login, text=f"{message}", bg=settings.PROGRAM_BG, fg='red',font=("Arial", 12))
-        self.message.place(relx=0.100, rely=0.800, height=40, width=400)
-
-
-    def exit_login(self):
-        msg = messagebox.askyesno("Exit login", "Wil je login verlaten?")
-        if (msg):
-            exit()
-
-    def mainloop_window(self):
-        self.login.mainloop()
+            Helper.error_message(self, 'Wachtwoord of email niet correct')
