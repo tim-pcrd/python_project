@@ -7,6 +7,8 @@ from classes.db import Db
 from classes.user import User
 import settings
 import classes.setup
+from classes.project_session import ActiveSession
+import pages.setup_page as stppg
 
 from mysql.connector import (connection)
 
@@ -22,46 +24,114 @@ db = connection.MySQLConnection(user='sql11491613', password='eWFcPv5Ndt',
 mycursor = db.cursor()
 
 
+activesession=classes.project_session.ActiveSession()
+
+
 class Session_Page(Frame):
     def __init__(self, root, width, height, user: User):
         super().__init__(root, width=width, height=height)
 
+        #setup
+        self.configure(bg=settings.PROGRAM_BG)
+        self.user = user
+
+        self.label_activesession = tk.Label(self, fg='black', font=('Arial', 12), width=10, text="Active Session")
+        self.label_activesession.pack()
+
         self.var1 = tk.StringVar()
-        self.l = tk.Label(self, bg='yellow', fg='black', font=('Arial', 12), width=10, textvariable=self.var1)
-        self.l.pack()
+        self.label_session = tk.Label(self, bg='yellow', fg='black', font=('Arial', 12), width=10, textvariable=self.var1)
+        self.label_session.pack()
 
-        self.b1 = tk.Button(self, text='Select session', width=20, height=2, command=self.selected_session)
-        self.b1.pack()
+        #select session
+        self.but_select_session = tk.Button(self, text='Select session', width=20, height=2, command=self.selected_session)
+        self.but_select_session.pack()
 
-        self.lb = tk.Listbox(self)
-        self.lb.pack()
-
-        # Create a new session:
-
-        self.b2 = tk.Button(self, text='Create new session', width=20, height=2)  # command=
-        self.b2.pack()
-
-    # Copy existing session:
+        # Copy existing session:
         self.b3 = tk.Button(self, text='Copy existing session', width=20, height=2)  # command=
         self.b3.pack()
-
+        self.box_session = tk.Listbox(self)
+        self.box_session.pack()
         self.add_items_listbox()
+
+        self.label_setup= Label(self, text="Kies setup:" )
+        #self.label_setup.pack(side = LEFT, fill = BOTH)
+        self.label_setup.pack()
+
+
+
+        self.box_setup = Combobox(self, values=setuplist)
+        self.box_setup.pack()
+
+
+
+
+
+        self.entry_newsession= Entry(self, width= 20, bg= "white")
+        self.entry_newsession.pack()
+
+        # Create a new session:
+        self.b2 = tk.Button(self, text='Create new session', width=20, height=2 ,  command=self.write_session )
+        self.b2.pack()
+
+
 
 
     # Add more items to the LISTBOX:
     def add_items_listbox(self):
-        mycursor.execute("SELECT sessionID FROM sessions;")
+        # db=Db()
+        # query="SELECT sessionID FROM sessions;"
+        # data=[]
+        # db.db_select(query,data)
+        # for x in db:
+        #     self.lb.insert('end', x)
+        # self.lb.pack()
+
+
+        mycursor.execute("SELECT sessionID, sessionName FROM sessions;")
         for x in mycursor:
-            self.lb.insert('end', x)
-        self.lb.pack()
+           self.box_session.insert('end', x)
+        self.box_session.pack()
 
 
     def selected_session(self):
-        value = self.lb.get(self.lb.curselection())
-        self.var1.set(value)
+        global selected_session
+        selected_session = self.box_session.get(self.box_session.curselection())
+        self.var1.set(selected_session)
+        print(selected_session)
+        activesession.load_session(selected_session)
+        print(activesession)
+
+    def write_session(self):
+        db = Db()
+        query ="INSERT INTO `sessions` (`sessionName`,`projectID`,`setupID`,`date`,`sessiontypeID`) VALUES (%s,%s,%s,%s,%s);"
+        data =(activesession.sessionName,activesession.projectID,activesession.setupID,activesession.date,activesession.sessiontypeID)
+        db.db_insert(query,data)
+        self.box_setup.update()
+
+
+    def copy_session(self):
+        global selected_session
+        activesession.load_session(selected_session)
+        self.write_session()
+        activesession.load_newest_session()
+
+
+    def write_new_session(self):
+        sessionName=self.entry_newsession.get()
+        activesession.add_session( sessionName, activesession.projectID, activesession.setupID)
+
+    def fill_combobox_setups(self):
+        stps=stppg.Setup_Page.get_setups(self)
+        setuplist=[]
+        for x in stps:
+            setuplist.append(x)
+        return setuplist
 
 
 '''
+CODE VAN SANNE:
+
+
 #Create WINDOW "Session":
 window = tk.Tk()
 window.title('Session')

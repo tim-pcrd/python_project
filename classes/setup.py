@@ -25,6 +25,47 @@ class ActiveSetup:
         self.setupDescription = result[2]
 
 
+    def get_setuplist(self):
+        setuplist=[]
+        db=Db()
+        query = "SELECT setupID, setupName , setupDescription FROM setups;"
+        data =()
+        result =db.db_select(query, data)
+        for x in result:
+            setuplist.append(x)
+        return setuplist
+
+
+
+    def get_chainlist_concerned(self, setupID):
+        chainlist_concerned=[]
+        db=Db()
+        query = "SELECT setup_chain.chainsetupID, chains.chainID, chainName \
+                    FROM chains \
+                   JOIN setup_chain \
+                    ON   chains.chainID=setup_chain.chainID \
+                    WHERE setup_chain.setupID = %s ;"
+        data =[setupID, ]
+        result =db.db_select(query, data)
+        for x in result:
+            chainlist_concerned.append(x)
+        return chainlist_concerned
+
+
+        # chains: list[ActiveChain] = []
+        # if db_results:
+        #     for result in db_results:
+        #         chain = ActiveSession()
+        #         session.sessionID = result[0]
+        #         session.album_name = result[1]
+        #         session.session_type_name = result[2]
+        #         session.setup_name = result[3]
+        #         session.setup_description = result[4]
+        #         chains.append(chain)
+        #
+        # return chains
+
+
     def get_gearlist(self):
         gearlist=[]
         db=Db()
@@ -79,6 +120,10 @@ class ActiveChain:
                 self.pos4 = chain[3]
             if chain[2] == 5:
                 self.pos5 = chain[3]
+
+
+
+
 
 
 # ActiveChain.select_chain(ActiveChain,2)
