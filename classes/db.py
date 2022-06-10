@@ -129,12 +129,5 @@ class Db:
             database='sql11491613')
 
 
-    # def get_connection(self):
-    #     self.db = connection.MySQLConnection(
-    #         user='root',
-    #         password='passw',
-    #         host='localhost',
-    #         database='online_recall')
-
 
 

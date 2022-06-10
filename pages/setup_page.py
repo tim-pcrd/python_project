@@ -11,24 +11,15 @@ import bcrypt
 
 
 
+#aanmaak van de instanties die de actieve setup/chain gaan bevatten
 
-db = connection.MySQLConnection(user='sql11491613', password='eWFcPv5Ndt',
-                                 host='35.157.16.43',
-                                 database='sql11491613')
-
-mycursor = db.cursor()
-
-
-#https://www.tutorialsteacher.com/python/create-gui-using-tkinter-python
-
-
-
-activechain=classes.setup.ActiveChain()
-print(activechain)
 activesetup=classes.setup.ActiveSetup()
 print(activesetup)
+activechain=classes.setup.ActiveChain()
+print(activechain)
 
 
+# aanmaak van het venster
 class Setup_Page(Frame):
     def __init__(self, root, width, height, user: User):
         super().__init__(root, width=width, height=height)
@@ -38,27 +29,21 @@ class Setup_Page(Frame):
         self.user = user
 
 
+#COLUMN1
+
         self.label_welcome = Label(self, text="Welkom bij de Setup Manager. Hier kan je een setup kiezen of maken, en je chains definieren die je wilt gebruiken.")
         self.label_welcome.place(relx=0.1, rely=0.05)
 
 
         self.label_setup= Label(self, text="1) Kies setup:" )
-        #self.label_setup.pack(side = LEFT, fill = BOTH)
         self.label_setup.place(relx=0.1, rely = 0.15)
 
 
         self.box_setup = Listbox(self)
         self.box_setup.place(relx=0.1, rely = 0.2)
 
+        #schrijf setups in listbox
         self.get_setups()
-
-        #self.scrollbar = Scrollbar(self)
-        #self.scrollbar.pack(side=RIGHT, fill=BOTH)
-        #sql_listbox_setup="SELECT setupName , setupDescription FROM setups;"
-
-
-        #self.box_setup.config(yscrollcommand=self.scrollbar.set)
-        #self.scrollbar.config(command=self.box_setup.yview)
 
 
         self.label_setup_name = Label(self, text="Of geef nieuwe setup naam in:")
@@ -83,11 +68,11 @@ class Setup_Page(Frame):
         self.but_pk_setup.place(relx=0.1, rely=0.85)
 
 
-        self.label_save_setup = Label(self, text="Sla setup op:")
-        #self.label_save_setup.place(relx=0.9, rely=0.85)
-
-        self.but_save_setup = Button(self, text="save setup", command=self.update_setup, pady=5)
-        self.but_save_setup.place(relx=0.9, rely=0.9)
+        # self.label_save_setup = Label(self, text="Sla setup op:")
+        # #self.label_save_setup.place(relx=0.9, rely=0.85)
+        #
+        # self.but_save_setup = Button(self, text="save setup", command=self.update_setup, pady=5)
+        # self.but_save_setup.place(relx=0.9, rely=0.9)
 
 
 #COLUMN2
@@ -100,6 +85,7 @@ class Setup_Page(Frame):
         self.box_chains = Listbox(self)
         self.box_chains.place(relx=0.3, rely = 0.2)
 
+        #schrijf chain in listbox
         self.get_chains()
 
         self.label_chain_name = Label(self, text="Of geef nieuwe chain naam in:")
@@ -134,10 +120,8 @@ class Setup_Page(Frame):
         self.box_order = Combobox(self, values=data)
         self.box_order.place(relx=0.5, rely = 0.2)
 
-        chain_gearunits="gearunits"
-        self.box_chain_gearunits = Message(self, width=200, text=activechain )
-        self.box_chain_gearunits.place(relx=0.5, rely = 0.3)
-
+        #laadt de activesetup en activechiain inhoud naar een message
+        self.load_messages()
 
         self.label_posbut= Label(self, text="kies positie van gearunit in chain:")
         self.label_posbut.place(relx=0.5, rely=0.8)
@@ -167,8 +151,9 @@ class Setup_Page(Frame):
 
 
 
-#------------selecteer----------------------
+#------------selecteer methodes----------------------
 
+    #haalt setups op uit database en zet degene die je in listbox kiest in de activesetup
     def pick_setup(self):
 
         global picked_setup
@@ -176,87 +161,77 @@ class Setup_Page(Frame):
         picked_setup=0
         activesetup = classes.setup.ActiveSetup()
         ps=self.box_setup.curselection()[0]
-        mycursor.execute("SELECT  *  FROM setups ORDER BY setupID ASC;")
+        setuplist=activesetup.get_setuplist()
 
         i = 0
-        for x in mycursor:
+        for x in setuplist:
             if i == ps:
                 picked_setup = x
             i += 1
 
-        #activesetup.load_setup(picked_setup)
+
         activesetup.setupID=picked_setup[0]
         activesetup.setupName=picked_setup[1]
         activesetup.setupDescription=picked_setup[2]
 
         chainlist_concerned=self.get_chains_concerned()
+
+        self.box_show_setup.destroy()
+        self.box_show_chain.destroy()
+        self.load_messages()
         print(activesetup)# ter controle
 
 
+
+    #haalt chains op uit database en zet degene die je in listbox kiest in de activechain
     def pick_chain(self):
         global activechain
-        activechain = classes.setup.ActiveChain()       #instantie maken van de Activechain klasse
+        activechain = classes.setup.ActiveChain()           #instantie maken van de Activechain klasse
         pc=self.box_chains.curselection()[0]+1              #de keuze van de listbox nemen, geeft tuple
-        #picked_chain=pc[0]+1                            # eerste waarde van tuple kiezen en de int verhogen met 1 omdat eerste chain chainID 1 heeft
+                                                            #eerste waarde van tuple kiezen en de int verhogen
+                                                            # met 1 omdat eerste chain chainID 1 heeft en listboxkeuze 0.
 
-        activechain.select_chain(pc)          #de chainID doorgeven aan de select_chain methode
+        activechain.select_chain(pc)                        #de chainID doorgeven aan de select_chain methode die de activeschain invult
 
-        self.box_chain_gearunits.update()
+        self.box_show_setup.destroy()                       #oude messages weghalen
+        self.box_show_chain.destroy()
+        self.load_messages()                                #nieuwe messages laden om inhoud ativesetup en activechain weer te geven
 
-        print(activechain) #ter controle
-
-
-    # def pick_chain(self):
-    #
-    #     global picked_chain
-    #     global activechain
-    #     picked_chain=0
-    #     activechain = classes.setup.ActiveChain()
-    #     pc=self.box_chains.curselection()[0]
-    #     mycursor.execute("SELECT  *  FROM chains ORDER BY setupID ASC;")
-    #
-    #     i = 0
-    #     for x in mycursor:
-    #         if i == pc:
-    #             picked_chain = x
-    #         i += 1
-    #
-    #     #activesetup.load_setup(picked_setup)
-    #     activechain.=picked_chain[0]
-    #     activesetup.setupName=picked_chain[1]
-    #     activesetup.setupDescription=picked_chain[2]
-    #
-    #     self.get_chains_concerned()
-    #     print(activesetup)# ter controle
+        print(activechain)                                  #ter controle
 
 
-
+    #positie van gearunit tijdelijk opslaan
     def pick_position(self):
         global picked_position
         pp=self.box_order.get()
         picked_position = int(pp)
         print(picked_position)
 
+
+
+
+
+
 # ----------wegschrijven------------------
 
 
 
-    def save_setup(self):
-        current_setupID = activesetup.setupID
-
-        if activesetup.setupID == None:
-            self.write_setup()
-        else:
-            self.update_setup(current_setupID)
-
-
-    def write_setup(self):
-        db = Db()
-        query1 ="INSERT INTO `setups` (`setupName`,`setupDescription`) VALUES (%s,%s);"
-        data1 =(activesetup.setupName,activesetup.setupDescription)
-        db.db_insert(query1,data1)
-
-        self.box_setup.update()
+    # def save_setup(self):
+    #     current_setupID = activesetup.setupID
+    #
+    #     if activesetup.setupID == None:
+    #         self.write_setup()
+    #     else:
+    #         self.update_setup(current_setupID)
+    #
+    #
+    # def write_setup(self):
+    #     db = Db()
+    #     query1 ="INSERT INTO `setups` (`setupName`,`setupDescription`) VALUES (%s,%s);"
+    #     data1 =(activesetup.setupName,activesetup.setupDescription)
+    #     db.db_insert(query1,data1)
+    #
+    #     self.box_setup.update()
 
     def update_setup(self):
         db = Db()
@@ -265,11 +240,12 @@ class Setup_Page(Frame):
 
         db.db_insert(query1,data1)
 
-        self.box_setup.update()
-
+        self.box_setup.delete(0, tk.END)
+        self.get_setups()
 
 
     def write_new_setup(self):
+        #niewe setup wegschrijven
         db = Db()
         query ="INSERT INTO `setups` (setupName,setupDescription) VALUES (%s,%s);"
         setupName=self.entry_newsetup.get()
@@ -277,22 +253,31 @@ class Setup_Page(Frame):
         data =(setupName,setupDescription)
         db.db_insert(query,data)
 
+        #nieuwe setup ophalen
+        db2=Db()
+        query2="SELECT * FROM setups ORDER BY setupID DESC LIMIT 1;"
+        data2=[]
+        new_setup=db2.db_select(query2, data2)
+        print(new_setup)
 
-        mycursor.execute("SELECT setupID FROM setups ORDER BY setupID DESC LIMIT 1;")
+        #setupID uit setup halen
         setupID=100
-        for x in mycursor:
-            setupID=x[0]+1
+        for x in new_setup:
+            setupID=x[0]
+
+        #active setup updaten
         activesetup.setupID=setupID
         activesetup.setupName=setupName
         activesetup.setupDescription=setupDescription
         print(activesetup)
 
+        #entries en list refreshen
         self.entry_newsetup.delete(0, 'end')
         self.entry_newsetup_desc.delete(0, 'end')
         self.box_setup.delete(0, tk.END)
         self.get_setups()
 
-
+    #wegscrijven van nieuwe chain en refreshen van chain listbox
     def write_new_chain(self):
         db = Db()
         query ="INSERT INTO `chains` (`chainName`) VALUES (%s);"
@@ -303,7 +288,7 @@ class Setup_Page(Frame):
         self.box_chains.delete(0, tk.END)
         self.get_chains()
 
-
+    #advanced functie/niet operationeel
     def update_chain(self):
 
 
@@ -312,7 +297,7 @@ class Setup_Page(Frame):
         data =[activechain.chainName,activechain.chainID]
         db.db_insert(query,data)
 
-#hiervoor moet de ketenID mee in de klasse weggeschreven zijn? + hoe de juiste entry in db opzoeken om up te daten?
+        #hiervoor moet de ketenID mee in de klasse weggeschreven zijn? + hoe de juiste entry in db opzoeken om up te daten?
         db = Db()
         query ="UPDATE `setup_chain` SET `chainID` = '%s' WHERE(`setupID` = '%s' AND channel =%s );"
         data =[activechain.chainID[0],activesetup.setupID]
@@ -320,23 +305,22 @@ class Setup_Page(Frame):
 
         self.entry_newchain.delete(0, 'end')
         self.box_chains.delete(0, tk.END)
-        #self.box_chains.
         self.get_chains()
 
 
 
-#zet gear in active chain
+    #zet gear in active chain
     def add_gear(self):
         global picked_position
         global gearlist
         pg = self.box_gear.curselection()[0]  # =int
-        mycursor.execute("SELECT  gearunitName  FROM gearunits;")
+        gearlist=activesetup.get_gearlist()
         i = 0
-        for x in mycursor:
+        for x in gearlist:
             if i == pg:
                 picked_gear = x
             i += 1
-        picked_gear_name = picked_gear[0]
+        picked_gear_name = picked_gear[1]
         print(picked_gear_name)
         if picked_position == 1:
             activechain.pos1 = picked_gear_name
@@ -349,26 +333,29 @@ class Setup_Page(Frame):
         elif picked_position == 5:
             activechain.pos5 = picked_gear_name
 
+        self.box_show_setup.destroy()
+        self.box_show_chain.destroy()
+        self.load_messages()
+
 
 
 #-------haal info uit db voor weergave in list/comboboxes-------------
 
-    #setups ophalen uit database
-
+    #setups ophalen uit database en in listbox printen
     def get_setups(self):
         self.box_setup.delete(0, tk.END)
         setuplist=activesetup.get_setuplist()
         for x in setuplist:
             self.box_setup.insert(END ,x)
 
-    # #chains ophalen uit database
+    # #chains ophalen uit database en in listbox printen
     def get_chains(self):
         self.box_chains.delete(0, tk.END)
-        mycursor.execute("SELECT * FROM chains ORDER BY chainID ASC;")
-        for x in mycursor:
+        chainlist=activesetup.get_chainlist()
+        for x in chainlist:
             self.box_chains.insert(END, x)
 
-    #chains ophalen uit database
+    #chains van een bepaalde setup ophalen uit database en in listbox printen
     def get_chains_concerned(self):
         activesetupID=activesetup.setupID
         print(activesetupID)
@@ -378,52 +365,28 @@ class Setup_Page(Frame):
         for x in chainlist_concerned:
             self.box_chains.insert(END ,x)
 
-
-
-
-
-
-    #alle gearunits ophalen uit database
-    # def get_gearunits(self):
-    #     mycursor.execute("SELECT gearunitID, gearunitName  FROM gearunits;")
-    #     for x in mycursor:
-    #         self.box_gear.insert(END, x)
-
+    #gearunits ophalen en in listbox printen
     def get_gearunits(self):
         gearlist=activesetup.get_gearlist()
         for x in gearlist:
             self.box_gear.insert(END, x)
 
+    #messages weergeven die de inhoude van de instanties activeseetup en activechain laten zien
+    def load_messages(self):
 
-#---------------refreshes--------------
+        self.box_show_setup = Message(self, width=200, text=activesetup )
+        self.box_show_setup.place(relx=0.5, rely = 0.3)
 
-    def refresh_s(self):
-        pass
-
-    def refresh_c(self):
-        pass
-
-    def refresh_g(self):
-        pass
+        self.box_show_chain = Message(self, width=200, text=activechain )
+        self.box_show_chain.place(relx=0.5, rely = 0.5)
 
 
 
 
 
 
-'''
-
-#freeSQL
-
-db = connection.MySQLConnection(user='sql11491613', password='eWFcPv5Ndt',
-                                host='35.157.16.43',
-                                database='sql11491613')
 
 
-#remoteSQL
-db = connection.MySQLConnection(user='Xpjf2Sfx1l', password='EZIFTyptKF',
-                                host='37.59.55.185',
-                                database='Xpjf2Sfx1l')
-'''
+
 
 

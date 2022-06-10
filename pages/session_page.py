@@ -12,19 +12,16 @@ import pages.setup_page as stppg
 
 from mysql.connector import (connection)
 
+
 db = connection.MySQLConnection(user='sql11491613', password='eWFcPv5Ndt',
                                 host='35.157.16.43',
                                 database='sql11491613')
-
-
-
-# db = connection.MySQLConnection(user='sql11491613', password='eWFcPv5Ndt',
-#                                  host='35.157.16.43',
-#                                  database='sql11491613')
 mycursor = db.cursor()
 
 
+
 activesession=classes.project_session.ActiveSession()
+activesetup=classes.setup.ActiveSetup()
 
 
 class Session_Page(Frame):
@@ -58,7 +55,7 @@ class Session_Page(Frame):
         self.label_setup.pack()
 
 
-
+        setuplist=self.get_setups()
         self.box_setup = Combobox(self, values=setuplist)
         self.box_setup.pack()
 
@@ -126,6 +123,10 @@ class Session_Page(Frame):
         for x in stps:
             setuplist.append(x)
         return setuplist
+
+    def get_setups(self):
+        list=activesetup.get_setuplist()
+        return list
 
 
 '''
