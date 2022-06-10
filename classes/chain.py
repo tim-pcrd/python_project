@@ -63,5 +63,8 @@ class Chain:
 
         return self.__gearunits
 
+    def empty_gearunits_list(self):
+        self.__gearunits.clear()
+
     def __str__(self) -> str:
         return f'{self.chainID}, {self.chain_name}'

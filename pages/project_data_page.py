@@ -22,19 +22,20 @@ class Project_Data_Page(Frame):
         # define string variables
         self.projectName = StringVar()
 
+        # store id for each returned object in the appropriate list
         self.list_sessionIds = []
         self.list_chainIds = []
 
         # define widgets
         # show selected project
-        self.selected_project = Label(self, text="selected project:", bg=settings.PROGRAM_BG)
+        self.selected_project = Label(self, text="project:", bg=settings.PROGRAM_BG)
         self.selected_project.place(relx=0.1, rely=0.1, height=20)
 
         self.selected_project_table = ttk.Treeview(self, height=1)
         self.fill_project_table(self.project.projectID)
 
         # list selected project's session(s) with accompanying setup description
-        self.project_sessions = Label(self, text="project session(s):", bg=settings.PROGRAM_BG)
+        self.project_sessions = Label(self, text="projectsessie(s):", bg=settings.PROGRAM_BG)
         self.project_sessions.place(relx=0.1, rely=0.23, height=20)
 
         self.project_sessions_list = Listbox(self)
@@ -42,11 +43,12 @@ class Project_Data_Page(Frame):
         self.fill_sessions_list(self.project.projectID)
 
         # list chains pertaining to the selected session
-        button_select_session = Button(self, text="List chains", command=self.fill_chains_list, bg=settings.BUTTON_BG,
+        button_select_session = Button(self, text="Toon ketens", command=self.fill_chains_list, bg=settings.BUTTON_BG,
                                        width=20)
         button_select_session.place(relx=0.75, rely=0.31)
 
-        self.setup_chains = Label(self, text="chains pertaining to selected session's setup:", bg=settings.PROGRAM_BG)
+        self.setup_chains = Label(self, text="ketens binnen de op de geselecteerde sessie toegepaste setup:",
+                                  bg=settings.PROGRAM_BG)
         self.setup_chains.place(relx=0.1, rely=0.43, height=20)
 
         self.setup_chains_list = Listbox(self)
@@ -54,15 +56,15 @@ class Project_Data_Page(Frame):
         # listbox is filled when button_select_session button is clicked
 
         # list the selected chain's gear units
-        button_select_chain = Button(self, text="List gear units", command=self.fill_gearunits_list,
+        button_select_chain = Button(self, text="toon gear units", command=self.fill_gearunits_list,
                                      bg=settings.BUTTON_BG, width=20)
         button_select_chain.place(relx=0.75, rely=0.53)
 
-        self.chain_gearunits = Label(self, text="selected chain's gear units:", bg=settings.PROGRAM_BG)
-        self.chain_gearunits.place(relx=0.1, rely=0.65, height=20)
+        self.chain_gearunits = Label(self, text="gear units in geselecteerde keten:", bg=settings.PROGRAM_BG)
+        self.chain_gearunits.place(relx=0.1, rely=0.66, height=20)
 
         self.chain_gearunits_list = Listbox(self)
-        self.chain_gearunits_list.place(relx=0.1, rely=0.7, height=80, relwidth=0.6)
+        self.chain_gearunits_list.place(relx=0.1, rely=0.71, height=80, relwidth=0.6)
         # listbox is filled when button_select_chain button is clicked
 
     # define instance methods
@@ -70,17 +72,17 @@ class Project_Data_Page(Frame):
         retrieved_project = self.project.select_project(project_id)
 
         self.selected_project_table.place(relx=0.2, rely=0.1)
-        self.selected_project_table['columns'] = ('project', 'artist', 'start date', 'end date')
+        self.selected_project_table['columns'] = ('project', 'artiest', 'startdatum', 'einddatum')
         self.selected_project_table.column("#0", width=0, stretch=NO)
         self.selected_project_table.column("project", anchor=CENTER, stretch=NO)
-        self.selected_project_table.column("artist", anchor=CENTER, stretch=NO)
-        self.selected_project_table.column("start date", anchor=CENTER, stretch=NO, minwidth=50)
-        self.selected_project_table.column("end date", anchor=CENTER, stretch=NO, minwidth=50)
+        self.selected_project_table.column("artiest", anchor=CENTER, stretch=NO)
+        self.selected_project_table.column("startdatum", anchor=CENTER, stretch=NO, minwidth=50)
+        self.selected_project_table.column("einddatum", anchor=CENTER, stretch=NO, minwidth=50)
         self.selected_project_table.heading("#0", text="", anchor=CENTER)
         self.selected_project_table.heading("project", text="project", anchor=CENTER)
-        self.selected_project_table.heading("artist", text="artist", anchor=CENTER)
-        self.selected_project_table.heading("start date", text="start date", anchor=CENTER)
-        self.selected_project_table.heading("end date", text="end date", anchor=CENTER)
+        self.selected_project_table.heading("artiest", text="artiest", anchor=CENTER)
+        self.selected_project_table.heading("startdatum", text="startdatum", anchor=CENTER)
+        self.selected_project_table.heading("einddatum", text="einddatum", anchor=CENTER)
         self.selected_project_table.insert('', tk.END, values=(retrieved_project.album_name,
                                                                retrieved_project.last_name + " " +
                                                                retrieved_project.first_name,
@@ -93,9 +95,10 @@ class Project_Data_Page(Frame):
             self.list_sessionIds.clear()
             for session in sessions:
                 self.list_sessionIds.append(session.sessionID)
-                self.project_sessions_list.insert(END, f"ID: {session.sessionID} / {session.album_name}, "
+                self.project_sessions_list.insert(END, f"{session.album_name}, "
+                                                       f"{session.session_name}, "
                                                        f"type {session.session_type_name}, "
-                                                       f"{session.setup_name}, "
+                                                       f" setup: {session.setup_name}, "
                                                        f"{session.setup_description}")
         else:
             pass
@@ -111,7 +114,6 @@ class Project_Data_Page(Frame):
         selected_session_id = self.list_sessionIds[selected_list_index]
         if isinstance(selected_session_id, int) and selected_session_id > 0:
             chains = self.chain.select_setup_chains(selected_session_id)
-            print("Aantel ketens:", len(chains))
             if len(chains) > 0:
                 self.list_chainIds.clear()
                 for chain in chains:
@@ -124,14 +126,12 @@ class Project_Data_Page(Frame):
         self.chain_gearunits_list.delete(0, tk.END)
         selection = self.setup_chains_list.curselection()
         if len(selection) == 0:
-            messagebox.showerror("Error", "Please select an item in the listbox")
+            messagebox.showerror("Foutmelding", "Selecteer indien mogelijk een optie uit de lijst")
             return
         selected_list_index = self.setup_chains_list.curselection()[0]
         selected_chain_id = int(self.list_chainIds[selected_list_index])
-        print("Het geselecteerde CHAINID:", selected_chain_id)
         if isinstance(selected_chain_id, int) and selected_chain_id > 0:
-            # new class instance with an empty gearunits list
-            self.chain = Chain()
+            self.chain.empty_gearunits_list()
             gearunits = self.chain.select_chain_gearunits(selected_chain_id)
             if len(gearunits) > 0:
                 for gearunit in gearunits:

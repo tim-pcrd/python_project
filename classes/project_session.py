@@ -113,6 +113,17 @@ class ActiveProject:
 
         return False
 
+    def check_project_exists(self, name):
+        db = Db()
+        query = "SELECT COUNT(*) FROM projects WHERE albumName = %s"
+        data = (name,)
+        result = db.db_select_one(query, data)
+
+        if result and result[0] > 0 :
+            return True
+
+        return False
+
 
 class ActiveSession:
     def __init__(self):
@@ -165,7 +176,7 @@ class ActiveSession:
 
     def select_project_sessions(self, id):
         db = Db()
-        query = "SELECT sessions.sessionID, projects.albumName, \
+        query = "SELECT sessions.sessionID, sessions.sessionName, projects.albumName, \
                  sessiontypes.sessiontypeName, setups.setupName, \
                  setups.setupDescription \
                  FROM projects \
@@ -184,10 +195,11 @@ class ActiveSession:
             for result in db_results:
                 session = ActiveSession()
                 session.sessionID = result[0]
-                session.album_name = result[1]
-                session.session_type_name = result[2]
-                session.setup_name = result[3]
-                session.setup_description = result[4]
+                session.session_name = result[1]
+                session.album_name = result[2]
+                session.session_type_name = result[3]
+                session.setup_name = result[4]
+                session.setup_description = result[5]
                 sessions.append(session)
 
         return sessions
