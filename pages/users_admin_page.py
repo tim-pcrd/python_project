@@ -22,16 +22,19 @@ class Users_Admin_Page(Frame):
         self.selected_user_form_components = []
 
         self.configure(bg=settings.PROGRAM_BG)
+
+        self.title = Label(self, text="Admin", bg=settings.PROGRAM_BG,font=("Arial", 16), fg='blue', anchor=W)
+        self.title.place(x=10, y=10, height=40, width=130)
         
         self.users_list_label = Label(self, text="Gebruikers:", bg=settings.PROGRAM_BG, anchor=W, font=("Arial", 12))
-        self.users_list_label.place(x=20, rely=0.05, height=20, width=120)
+        self.users_list_label.place(x=20, rely=0.150, height=20, width=120)
 
         self.users_list = Listbox(self, exportselection=False)
-        self.users_list.place(x=20, rely=0.100, height=350, width=180)
+        self.users_list.place(x=20, rely=0.200, height=350, width=180)
         self.users_list.bind('<<ListboxSelect>>', self.get_selected_user)
 
         self.new_user_btn = Button(self, text="Nieuwe gebruiker", command=self.show_new_user_frame, bg=settings.BUTTON_BG)
-        self.new_user_btn.place(x=20, rely=0.700, width=180)
+        self.new_user_btn.place(x=20, rely=0.800, width=180)
         
 
         self.fill_userslist()
@@ -41,73 +44,73 @@ class Users_Admin_Page(Frame):
 
 
         self.selected_user_label = Label(self, text="Geselecteerde gebruiker:", bg=settings.PROGRAM_BG, anchor=W, font=("Arial", 12))
-        self.selected_user_label.place(relx=0.230, rely=0.05, height=20, width=200)
+        self.selected_user_label.place(relx=0.230, rely=0.150, height=20, width=200)
         
         self.first_name = Label(self, text="Voornaam:", bg=settings.PROGRAM_BG,anchor=W)
-        self.first_name.place(relx=0.230, rely=0.100, height=20, width=120)
+        self.first_name.place(relx=0.230, rely=0.200, height=20, width=120)
         
 
         self.first_name_box = Entry(self)
-        self.first_name_box.place(relx=0.350, rely=0.100, height=20, width=180)
+        self.first_name_box.place(relx=0.350, rely=0.200, height=20, width=180)
         self.selected_user_form_components.append(self.first_name_box)
 
         self.last_name = Label(self, text="Familienaam:", bg=settings.PROGRAM_BG,anchor=W)
-        self.last_name.place(relx=0.230, rely=0.150, height=20, width=100)
+        self.last_name.place(relx=0.230, rely=0.250, height=20, width=100)
         
 
         self.last_name_box = Entry(self)
-        self.last_name_box.place(relx=0.350, rely=0.150, height=20, width=180)
+        self.last_name_box.place(relx=0.350, rely=0.250, height=20, width=180)
         self.selected_user_form_components.append(self.last_name_box)
 
         self.email = Label(self, text="Email:", bg=settings.PROGRAM_BG, anchor=W)
-        self.email.place(relx=0.230, rely=0.200, height=20, width=120)
+        self.email.place(relx=0.230, rely=0.300, height=20, width=120)
 
         self.email_box = Entry(self)
-        self.email_box.place(relx=0.350, rely=0.200, height=20, width=180)
+        self.email_box.place(relx=0.350, rely=0.300, height=20, width=180)
         self.selected_user_form_components.append(self.email_box)
 
         self.role = Label(self, text="Rol:", bg=settings.PROGRAM_BG, anchor=W)
-        self.role.place(relx=0.230, rely=0.25, height=20, width=120)
+        self.role.place(relx=0.230, rely=0.35, height=20, width=120)
 
         self.roles = Role.get_all_roles()
         
         self.role_combobox = Combobox(self, values=[x.role for x in self.roles])
-        self.role_combobox.place(relx=0.350, rely=0.25, height=20, width=180)
+        self.role_combobox.place(relx=0.350, rely=0.35, height=20, width=180)
         self.selected_user_form_components.append(self.role_combobox)
 
 
         self.save_btn = Button(self, text='Opslaan', command=self.save_selected_user, bg=settings.BUTTON_BG)
-        self.save_btn.place(relx=0.350, rely=0.30, width=180)
+        self.save_btn.place(relx=0.350, rely=0.40, width=180)
         self.selected_user_form_components.append(self.save_btn)
 
         self.password = Label(self, text="Nieuw wachtwoord", bg=settings.PROGRAM_BG)
-        self.password.place(relx=0.230, rely=0.40, height=20, width=120)
+        self.password.place(relx=0.230, rely=0.50, height=20, width=120)
 
         self.repeat_password = Label(self, text="Herhaal wachtwoord", bg=settings.PROGRAM_BG)
-        self.repeat_password.place(relx=0.230, rely=0.45, height=20, width=120)
+        self.repeat_password.place(relx=0.230, rely=0.55, height=20, width=120)
 
         self.password_box = Entry(self)
         self.password_box.configure(show="*")
-        self.password_box.place(relx=0.350, rely=0.40, height=20, width=180)
+        self.password_box.place(relx=0.350, rely=0.50, height=20, width=180)
         self.selected_user_form_components.append(self.password_box)
 
         self.repeat_password_box = Entry(self)
         self.repeat_password_box.configure(show="*")
-        self.repeat_password_box.place(relx=0.350, rely=0.45, height=20, width=180)
+        self.repeat_password_box.place(relx=0.350, rely=0.55, height=20, width=180)
         self.selected_user_form_components.append(self.repeat_password_box)
 
         self.save_password_btn = Button(self, text='Wachtwoord wijzigen', command=self.change_password_selected_user, bg=settings.BUTTON_BG)
-        self.save_password_btn.place(relx=0.350, rely=0.50, width=180)
+        self.save_password_btn.place(relx=0.350, rely=0.60, width=180)
         self.selected_user_form_components.append(self.save_password_btn)
 
         
         self.cancel_user_btn = Button(self, text='Annuleer', command=self.cancel_selected_user, bg=settings.WARNING_BUTTON_BG)
-        self.cancel_user_btn.place(relx=0.350, rely=0.60, width=180)
+        self.cancel_user_btn.place(relx=0.350, rely=0.70, width=180)
         self.selected_user_form_components.append(self.cancel_user_btn)
 
 
         self.delete_user_btn = Button(self, text='Gebruiker verwijderen', command=self.delete_selected_user, bg=settings.DANGER_BUTTON_BG, fg=settings.DANGER_BUTTON_FG)
-        self.delete_user_btn.place(relx=0.350, rely=0.65, width=180)
+        self.delete_user_btn.place(relx=0.350, rely=0.75, width=180)
         self.selected_user_form_components.append(self.delete_user_btn)
 
 
@@ -256,51 +259,51 @@ class Users_Admin_Page(Frame):
 
 
         self.new_user_label = Label(self.new_user_frame, text="Nieuwe gebruiker:", bg=settings.PROGRAM_BG, anchor=W, font=("Arial", 12))
-        self.new_user_label.place(x=10, rely=0.05, height=20, width=200)
+        self.new_user_label.place(x=10, rely=0.15, height=20, width=200)
         
         self.new_first_name = Label(self.new_user_frame, text="Voornaam:", bg=settings.PROGRAM_BG,anchor=W)
-        self.new_first_name.place(x=10, rely=0.100, height=20, width=120)
+        self.new_first_name.place(x=10, rely=0.200, height=20, width=120)
 
         self.new_first_name_box = Entry(self.new_user_frame)
-        self.new_first_name_box.place(x=130, rely=0.100, height=20, width=180)
+        self.new_first_name_box.place(x=130, rely=0.200, height=20, width=180)
 
         self.new_last_name = Label(self.new_user_frame, text="Familienaam:", bg=settings.PROGRAM_BG,anchor=W)
-        self.new_last_name.place(x=10, rely=0.150, height=20, width=100)
+        self.new_last_name.place(x=10, rely=0.250, height=20, width=100)
 
         self.new_last_name_box = Entry(self.new_user_frame)
-        self.new_last_name_box.place(x=130, rely=0.150, height=20, width=180)
+        self.new_last_name_box.place(x=130, rely=0.250, height=20, width=180)
 
         self.new_email = Label(self.new_user_frame, text="Email:", bg=settings.PROGRAM_BG, anchor=W)
-        self.new_email.place(x=10, rely=0.200, height=20, width=120)
+        self.new_email.place(x=10, rely=0.300, height=20, width=120)
 
         self.new_email_box = Entry(self.new_user_frame)
-        self.new_email_box.place(x=130, rely=0.200, height=20, width=180)
+        self.new_email_box.place(x=130, rely=0.300, height=20, width=180)
 
         self.new_role = Label(self.new_user_frame, text="Rol:", bg=settings.PROGRAM_BG, anchor=W)
-        self.new_role.place(x=10, rely=0.25, height=20, width=120)
+        self.new_role.place(x=10, rely=0.35, height=20, width=120)
 
         self.new_role_combobox = Combobox(self.new_user_frame, values=[x.role for x in self.roles])
-        self.new_role_combobox.place(x=130, rely=0.25, height=20, width=180)
+        self.new_role_combobox.place(x=130, rely=0.35, height=20, width=180)
 
         self.new_password = Label(self.new_user_frame, text="Nieuw wachtwoord", bg=settings.PROGRAM_BG,anchor=W)
-        self.new_password.place(x=10, rely=0.30, height=20, width=120)
+        self.new_password.place(x=10, rely=0.40, height=20, width=120)
 
         self.new_repeat_password = Label(self.new_user_frame, text="Herhaal wachtwoord", bg=settings.PROGRAM_BG, anchor=W)
-        self.new_repeat_password.place(x=10, rely=0.35, height=20, width=120)
+        self.new_repeat_password.place(x=10, rely=0.45, height=20, width=120)
 
         self.new_password_box = Entry(self.new_user_frame)
         self.new_password_box.configure(show="*")
-        self.new_password_box.place(x=130, rely=0.30, height=20, width=180)
+        self.new_password_box.place(x=130, rely=0.40, height=20, width=180)
 
         self.new_repeat_password_box = Entry(self.new_user_frame)
         self.new_repeat_password_box.configure(show="*")
-        self.new_repeat_password_box.place(x=130, rely=0.35, height=20, width=180)
+        self.new_repeat_password_box.place(x=130, rely=0.45, height=20, width=180)
 
         self.save_new_user_btn = Button(self.new_user_frame, text='Opslaan', command=self.save_new_user, bg=settings.BUTTON_BG)
-        self.save_new_user_btn.place(x=130, rely=0.40, width=180)
+        self.save_new_user_btn.place(x=130, rely=0.50, width=180)
 
         self.cancel_new_user_btn = Button(self.new_user_frame, text='Annuleer', command=self.cancel_new_user, bg=settings.WARNING_BUTTON_BG)
-        self.cancel_new_user_btn.place(x=130, rely=0.45, width=180)
+        self.cancel_new_user_btn.place(x=130, rely=0.55, width=180)
 
 
 
