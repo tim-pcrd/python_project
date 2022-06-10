@@ -1,6 +1,9 @@
 from classes.db import Db
 
 
+#-----PROJECT CLASS----------------
+
+
 class ActiveProject:
     def __init__(self):
         self.projectID = None
@@ -114,26 +117,53 @@ class ActiveProject:
         return False
 
 
+
+
+#-----SESSION CLASS----------------
+
+
 class ActiveSession:
     def __init__(self):
-        self.sessionID = None
-        self.projectID = None
-        self.setupID = None
-        self.date = None
-        self.sessiontypeID = None
+        self.sessionID =        None
+        self.sessionName=       None
+        self.projectID =        None
+        self.setupID =          None
+        self.date =             None
+        self.sessiontypeID =    None
+
+
+    def __str__(self) -> str:
+        return f'ActiveSession contains:\nsessionID=\t\t{self.sessionID}\nsession name=\t{self.sessionName}\nprojectID=\t\t{self.projectID}\nsetupID=\t\t{self.setupID}\ndate=\t\t\t{self.date}\nsessiontypeID=\t{self.sessiontypeID}'
+
 
     def load_session(self, sessionID):
         db = Db()
-        query = "SELECT * FROM session; WHERE sessionID=%s"
-        data = sessionID
+        query = "SELECT * FROM sessions  WHERE sessionID=%s; "
+        data = (sessionID)
         result = db.db_select_one(query, data)
 
         if result:
-            self.sessionID = result[0]
-            self.projectID = result[1]
-            self.setupID = result[2]
-            self.date = result[3]
-            self.sessiontypeID = result[4]
+            self.sessionID =        result[0]
+            self.sessionName=       result[1]
+            self.projectID =        result[2]
+            self.setupID =          result[3]
+            self.date =             result[4]
+            self.sessiontypeID =    result[5]
+
+
+    def load_newest_session(self):
+        db = Db()
+        query = "SELECT * FROM sessions  WHERE id=(SELECT max(id) FROM sessions);"
+        data = ()
+        result = db.db_select_one(query, data)
+
+        if result:
+            self.sessionID =        result[0]
+            self.projectID =        result[1]
+            self.setupID =          result[2]
+            self.date =             result[3]
+            self.sessiontypeID =    result[4]
+
 
     # retrieve all sessions from database
     def select_all_sessions(self):
@@ -191,3 +221,11 @@ class ActiveSession:
                 sessions.append(session)
 
         return sessions
+
+    def add_session(self, sessionName, projectID, setupID):
+        db = Db()
+        query = "INSERT INTO sessions (sessionName, projectID, setupID, date) VALUES (%s, %s, %s, NOW());"
+        data = (sessionName, projectID, setupID)
+        result = db.db_insert(query, data)
+
+        return result
